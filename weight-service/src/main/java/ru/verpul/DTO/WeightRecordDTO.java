@@ -1,27 +1,32 @@
 package ru.verpul.DTO;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.verpul.DTO.validator.UniqueRecordDate;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
 @UniqueRecordDate(message = "Дата записи не уникальна")
 @AllArgsConstructor
+@Builder
 public class WeightRecordDTO {
     private Long id;
 
+    @PastOrPresent(message = "Дата взвешивания не может быть больше текущей")
     @NotNull(message = "Поле должно быть заполнено")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate weightRecordDate;
 
-    @NotEmpty(message = "Поле должно быть заполнено")
-    @Pattern(regexp = "^[5-9]\\d(\\.\\d)?$", message = "Неверный формат данных")
+    @NotBlank(message = "Поле должно быть заполнено")
+    @Pattern(regexp = "^(([5-9]\\d(\\.\\d)?)|(^\\s*))$", message = "Вес должен быть от 50 до 99 кг ровно или с одой цифрой после точки")
     private String weightRecordValue;
+
+    private Double differencePreviousValue;
+
+    private String formattedWeightRecordDate;
 }

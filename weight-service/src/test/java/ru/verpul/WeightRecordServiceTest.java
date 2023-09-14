@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 import ru.verpul.DTO.WeightRecordDTO;
 import ru.verpul.mapper.WeightRecordMapper;
 import ru.verpul.model.WeightRecord;
@@ -33,13 +34,13 @@ public class WeightRecordServiceTest {
 
     @Test
     void getWeightRecordsList() {
-        when(weightRecordRepository.findAll()).thenReturn(WeightRecordTestData.weightRecordList);
+        when(weightRecordRepository.findAll(Sort.by("weightRecordDate").descending())).thenReturn(WeightRecordTestData.weightRecordList);
 
         List<WeightRecordDTO> weightRecordDTOList = weightRecordService.getWeightRecordsList();
 
         assertEquals(3, weightRecordDTOList.size());
 
-        verify(weightRecordMapper, times(3)).weightRecordToWeightRecordDTO(any(WeightRecord.class));
+        verify(weightRecordMapper, times(3)).weightRecordToWeightRecordDTO(any(WeightRecord.class), anyString());
     }
 
     @Test

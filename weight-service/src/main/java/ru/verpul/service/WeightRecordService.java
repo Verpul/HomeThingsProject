@@ -1,6 +1,7 @@
 package ru.verpul.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.verpul.DTO.WeightRecordDTO;
@@ -10,9 +11,12 @@ import ru.verpul.model.WeightRecord;
 import ru.verpul.repository.WeightRecordRepository;
 
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +26,15 @@ public class WeightRecordService {
     private final WeightRecordMapper weightRecordMapper;
 
     public List<WeightRecordDTO> getWeightRecordsList() {
-        return weightRecordRepository.findAll()
-                .stream()
-                .map(weightRecordMapper::weightRecordToWeightRecordDTO)
+        Sort sort = Sort.by("weightRecordDate").descending();
+        List<WeightRecord> weightRecordList = weightRecordRepository.findAll(sort);
+
+        int weightRecordListSize = weightRecordList.size();
+        return IntStream.range(0, weightRecordListSize)
+                .mapToObj(i -> {
+                    String previousRecordValue = i == weightRecordListSize - 1 ? "0" : weightRecordList.get(i + 1).getWeightRecordValue();
+                    return weightRecordMapper.weightRecordToWeightRecordDTO(weightRecordList.get(i), previousRecordValue);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -39,7 +49,7 @@ public class WeightRecordService {
         if (foundWeightRecord.isPresent()) {
             WeightRecord weightRecord = foundWeightRecord.get();
             weightRecord.setWeightRecordDate(weightRecordDTO.getWeightRecordDate());
-            weightRecord.setWeightRecordValue(weightRecord.getWeightRecordValue());
+            weightRecord.setWeightRecordValue(weightRecordDTO.getWeightRecordValue());
 
             return weightRecordRepository.save(weightRecord);
         }
