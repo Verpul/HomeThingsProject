@@ -1,0 +1,24 @@
+name: HomeThings CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Run command on remote server
+        uses: D3rHase/ssh-command-action@v0.2.2
+        with:
+          host: ${{secrets.SSH_HOST}}
+          user: ${{secrets.SSH_USER}}
+          private_ket: ${{secrets.SSH_PRIVATE_KEY}}
+          command: |
+           cd ${{secrets.PROJECT_FOLDER}};
+           git checkout main;
+           git pull;
+           docker-compose --file docker-compose.yml down;
+           docker-compose --file docker-compose.yml.up -d;
+           docker system prune --all --force;
