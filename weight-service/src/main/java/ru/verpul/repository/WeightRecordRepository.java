@@ -11,4 +11,5 @@ public interface WeightRecordRepository extends JpaRepository<WeightRecord, Long
 
     @Query("SELECT w.id FROM WeightRecord as w WHERE w.weightRecordDate = :recordDate")
     Optional<Long> findByRecordDate(LocalDate recordDate);
+
 }

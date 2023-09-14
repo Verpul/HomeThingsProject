@@ -29,7 +29,8 @@ public class WeightRecordControllerTest {
     private static final String WEIGHT_RECORDS_REST_URL = "/api/weight/";
     private static final String VALIDATION_NULL_MESSAGE = "Поле должно быть заполнено";
     private static final String VALIDATION_EXISTS_MESSAGE = "Дата записи не уникальна";
-    private static final String VALIDATION_WRONG_FORMAT_MESSAGE = "Неверный формат данных";
+    private static final String VALIDATION_WRONG_FORMAT_MESSAGE = "Вес должен быть от 50 до 99 кг ровно или с одой цифрой после точки";
+    private static final String VALIDATION_DATE_FROM_FUTURE = "Дата взвешивания не может быть больше текущей";
 
     @Autowired
     MockMvc mockMvc;
@@ -115,6 +116,18 @@ public class WeightRecordControllerTest {
                         .content(objectMapper.writeValueAsString(newWeightRecordDTO)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.weightRecordValue", is(VALIDATION_WRONG_FORMAT_MESSAGE)));
+    }
+
+    @Test
+    void createWeightRecordDateFuture() throws Exception {
+        WeightRecordDTO newWeightRecordDTO = WeightRecordTestData.getNewWeightRecord();
+        newWeightRecordDTO.setWeightRecordDate(LocalDate.parse("3000-01-01"));
+
+        mockMvc.perform(post(WEIGHT_RECORDS_REST_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newWeightRecordDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.weightRecordDate", is(VALIDATION_DATE_FROM_FUTURE)));
     }
 
     @Test

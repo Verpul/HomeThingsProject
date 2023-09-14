@@ -11,6 +11,7 @@ import ru.verpul.service.WeightRecordService;
 import javax.validation.Valid;
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value = "/api/weight", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor

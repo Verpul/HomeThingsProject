@@ -19,7 +19,7 @@ public class UniqueRecordDateValidator implements ConstraintValidator<UniqueReco
         Long id = weightRecordDTO.getId();
         LocalDate recordDate = weightRecordDTO.getWeightRecordDate();
 
-        if(recordDate == null) return true;
+        if (recordDate == null || recordDate.isAfter(LocalDate.now())) return true;
 
         Long foundId = weightRecordService.getWeightRecordByDate(recordDate);
 
