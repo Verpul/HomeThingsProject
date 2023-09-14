@@ -12,11 +12,11 @@ jobs:
       - name: Run command on remote server
         uses: D3rHase/ssh-command-action@v0.2.2
         with:
-          host: ${{variables.SSH_HOST}}
-          user: ${{variables.SSH_USER}}
+          host: ${{env.SSH_HOST}}
+          user: ${{env.SSH_USER}}
           private_ket: ${{secrets.SSH_PRIVATE_KEY}}
           command: |
-           cd ${{variables.PROJECT_FOLDER}};
+           cd ${{env.PROJECT_FOLDER}};
            git checkout main;
            git pull;
            docker-compose --file docker-compose.yml down;
