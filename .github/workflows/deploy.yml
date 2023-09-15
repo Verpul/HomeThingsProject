@@ -15,7 +15,6 @@ jobs:
           host: ${{env.SSH_HOST}}
           user: ${{env.SSH_USER}}
           private_key: ${{secrets.SSH_PRIVATE_KEY}}
-          host_fingerprint: ${{secrets.SSH_FINGERPRINT}}
           command: |
            cd ${{env.PROJECT_FOLDER}};
            git checkout main;
