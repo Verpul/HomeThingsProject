@@ -17,7 +17,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
-  weight-app:
+  weight-service:
     build:
       context: .
       dockerfile: ./weight-service/Dockerfile
