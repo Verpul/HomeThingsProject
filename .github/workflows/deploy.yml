@@ -16,10 +16,15 @@ jobs:
           user: ${{secrets.SSH_USER}}
           private_key: ${{secrets.SSH_PRIVATE_KEY}}
           command: |
-           cd ${{secrets.PROJECT_FOLDER}};
-           git checkout main;
-           git pull;
-           docker-compose --file docker-compose.yml down;
-           docker-compose --file docker-compose.yml up -d;
-           docker system prune --all --force;
+            cd ${{secrets.PROJECT_FOLDER}}
+           
+            git checkout main
+            git pull
+            
+            echo POSTGRES_USER = ${{secrets.POSTGRES_USER}} > .env
+            echo POSTGRES_PASSWORD = ${{secrets.POSTGRES_PASSWORD}} >> .env
+            docker-compose --file docker-compose.yml down
+            docker-compose --file docker-compose.yml --env-file .env up -d
+            docker system prune --all --force
+            rm .env
            

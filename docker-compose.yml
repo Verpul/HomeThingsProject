@@ -1,8 +1,32 @@
-version: '3'
+version: '3.8'
 
 services:
   frontend:
     build: ./frontend-service
+    container_name: frontend
     restart: unless-stopped
     ports:
       - '80:80'
+
+  homethings-db:
+    image: postgres:14.1-alpine
+    container_name: homethings-db
+    restart: always
+    environment:
+      POSTGRES_DB: homethings_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  weight-app:
+    build:
+      context: .
+      dockerfile: ./weight-service/Dockerfile
+    container_name: weight-app
+    restart: unless-stopped
+    environment:
+      POSTGRES_HOST: homethings-db
+      POSTGRES_DB: homethings_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      - homethings-db
