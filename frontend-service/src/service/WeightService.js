@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const WEIGHT_API_URL = 'http://localhost:8081/api/weight'
+const WEIGHT_API_URL = 'http://verpul.ru:8081/api/weight'
 
 class WeightService {
 
