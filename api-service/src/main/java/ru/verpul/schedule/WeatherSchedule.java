@@ -26,8 +26,6 @@ public class WeatherSchedule {
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
     public void loadWeatherData() {
-        System.out.println("Я запустился");
-
         try {
             WeatherDTO loadedWeatherData = weatherFeign.getWeatherData();
             weatherData.setCurrentWeatherData(loadedWeatherData);
