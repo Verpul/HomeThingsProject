@@ -1,19 +1,19 @@
 <template>
-  <div>
+  <v-app>
     <MainMenu/>
     <v-main>
       <v-container fluid>
-        <router-view></router-view>
+        <WeatherComponent/>
       </v-container>
     </v-main>
-  </div>
+  </v-app>
 </template>
 
 <script>
-import MainMenu from "@/components/MainMenu";
+import WeatherComponent from "@/components/WeatherComponent";
 
 export default {
   name: 'IndexView',
-  components: {MainMenu},
+  components: {WeatherComponent},
 }
 </script>

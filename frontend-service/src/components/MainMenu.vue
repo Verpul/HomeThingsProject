@@ -20,7 +20,7 @@
             <v-icon>mdi-weight-kilogram</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>Контроль веса</v-list-item-title>
+            <v-list-item-title to="/weight">Контроль веса</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
