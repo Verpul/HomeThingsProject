@@ -29,6 +29,12 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ## Weight Service (Сервис учета веса)
 - Порт 8081
 
-## Enviroment variables:
+#### Enviroment variables:
 - POSTGRES_USER
 - POSTGRES_PASSWORD
+
+## Api Service
+- Порт 8082
+
+#### API's
+- Погода - https://www.yr.no

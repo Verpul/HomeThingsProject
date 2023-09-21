@@ -10,14 +10,12 @@ const routes = [
     path: '/',
     name: 'Index',
     component: Index,
-    children: [
-      {
-        name: "Weight Component",
-        path: "/weight",
-        component: WeightComponent
-      },
-    ]
   },
+  {
+    path: '/weight',
+    name: 'Weight Component',
+    component: WeightComponent
+  }
 ]
 
 const router = new VueRouter({
