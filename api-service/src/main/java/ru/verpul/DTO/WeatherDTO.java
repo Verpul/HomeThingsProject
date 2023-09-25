@@ -3,7 +3,9 @@ package ru.verpul.DTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import ru.verpul.util.CommonUtil;
 import ru.verpul.util.WeatherUtil;
 
 import java.util.ArrayList;
@@ -11,7 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Data
+@Getter
+@Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherDTO {
 
@@ -23,7 +26,7 @@ public class WeatherDTO {
 
     @JsonProperty("created")
     private void unpackCreatedFieldData(JsonNode createdNode) {
-        this.updatedDateTime = WeatherUtil.getFormattedWeatherUpdateDate(createdNode.asText());
+        this.updatedDateTime = CommonUtil.getFormattedUpdateDate(createdNode.asText());
     }
 
     @JsonProperty("dayIntervals")

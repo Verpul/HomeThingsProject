@@ -38,3 +38,5 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 #### API's
 - Погода - https://www.yr.no
+- Курс валют ЦБ - https://www.cbr.ru/currency_base/daily/
+- Курс валют Тинькофф - https://www.tinkoff.ru/about/exchange/

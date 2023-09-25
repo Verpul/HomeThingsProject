@@ -1,11 +1,11 @@
 import axios from "axios"
 
-const WEIGHT_API_URL = 'http://localhost:8082/api/weather'
+const WEATHER_API_URL = process.env.VUE_APP_API_SERVICE_URL + '/weather'
 
 class WeatherService {
 
   getWeatherData() {
-    return axios.get(WEIGHT_API_URL);
+    return axios.get(WEATHER_API_URL);
   }
 }
 
