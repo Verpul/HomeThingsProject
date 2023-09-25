@@ -4,7 +4,7 @@
       <v-col class="col-5">
         <v-card outlined>
           <v-card-title>
-            <v-icon cmall>mdi-clock-outline</v-icon>
+            <v-icon>mdi-clock-outline</v-icon>
             <span class="ms-2">Погода сейчас <span class="text-body-2 text--disabled">(Обновлено {{ weatherData.updatedDateTime }})</span></span>
 
           </v-card-title>
@@ -29,7 +29,9 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col class="col-5"></v-col>
+      <v-col class="col-5">
+        <CurrencyComponent />
+      </v-col>
     </v-row>
 
     <v-row class="justify-center">
@@ -143,6 +145,7 @@
 
 <script>
 import WeatherService from "@/service/WeatherService";
+import CurrencyComponent from "@/components/CurrencyComponent";
 
 export default {
   name: "WeatherComponent",
@@ -178,6 +181,9 @@ export default {
   },
   created() {
     this.loadData()
+  },
+  components: {
+    CurrencyComponent
   }
 }
 </script>
