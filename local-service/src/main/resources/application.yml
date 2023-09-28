@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: weight-service
+    name: local-service
 
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -13,9 +13,11 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
 
-logging:
-  level:
-    root: info
+  liquibase:
+    change-log: "classpath:db/changelog/changelog-master.xml"
+    enabled: true
+
+
 

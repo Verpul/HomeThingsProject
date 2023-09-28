@@ -12,11 +12,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class WeightRecord {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+public class WeightRecord extends BaseEntity{
 
     @Column(name = "weight_record_date", unique = true, nullable = false)
     private LocalDate weightRecordDate;
