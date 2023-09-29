@@ -24,8 +24,11 @@ public class Reminder extends BaseEntity{
     @Column(name = "expire_date")
     private LocalDate expireDate;
 
-//    @Column(name = "expire_time")
-//    private LocalTime reminderTime;
+    @Column(name = "remind_date")
+    private LocalDate remindDate;
+
+    @Column(name = "remind_time")
+    private LocalTime remindTime;
 
 //    @Column(name = "repeatable", nullable = false)
 //    private Boolean repeatable;

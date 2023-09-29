@@ -3,28 +3,14 @@
 ## Frontend Service (Vue + Vuetify)
 - Порт 8080
 
-### Project setup
-```
+### Запуск (требуется установка Node.js)
+cmd -> cd frontend-service
+
+### Скачивание пакетов
 npm install
-```
 
-### Compiles and hot-reloads for development
-```
+### Dev-запуск
 npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ## Weight Service (Сервис учета веса)
 - Порт 8081

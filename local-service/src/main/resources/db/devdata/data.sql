@@ -20,6 +20,9 @@ FROM reminders;
 ALTER
 SEQUENCE reminders_id_seq RESTART WITH 1;
 
-INSERT INTO reminders (title, expire_date)
-VALUES ('Напоминание без даты окончания', null),
-       ('Напоминание с датой окончания', '2023-04-09')
+INSERT INTO reminders (title, expire_date, remind_date, remind_time)
+VALUES ('Напоминание без даты окончания', null, null, null),
+       ('Напоминание с датой окончания', '2023-04-09', null, null),
+       ('Напоминание с датой напоминания', '2023-04-09', '2023-06-06', null),
+       ('Напоминание с датой и временем напоминания', '2023-04-09', '2023-06-06', '09:30:00')
+

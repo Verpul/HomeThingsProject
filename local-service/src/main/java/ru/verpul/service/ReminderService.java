@@ -31,6 +31,8 @@ public class ReminderService {
             Reminder reminder = foundReminder.get();
             reminder.setTitle(reminderDTO.getTitle());
             reminder.setExpireDate(reminderDTO.getExpireDate());
+            reminder.setRemindDate(reminderDTO.getRemindDate());
+            reminder.setRemindTime(reminderDTO.getRemindTime());
 
             return reminderRepository.save(reminder);
         }

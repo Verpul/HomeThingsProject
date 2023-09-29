@@ -19,7 +19,7 @@
             <v-list-item-group>
               <template v-for="(item, index) in remindersList">
                 <v-list-item :key="item.id" @click="showReminderInfo(item)">
-                  <v-list-item-action>
+                  <v-list-item-action @click.stop="handleReminderComplete(item.id)">
                     <v-btn icon color="primary">
                       <v-icon>
                         mdi-check
@@ -29,9 +29,13 @@
                   <v-list-item-content>
                     <v-list-item-title class="text-body-2 font-weight-medium">{{ item.title }}</v-list-item-title>
                     <div class="mt-2">
-                      <v-list-item-title class="text-caption" v-if="item.expireDate">
+                      <v-list-item-title class="text-caption float-left me-2" v-if="item.expireDate">
                         <v-icon small>mdi-calendar</v-icon>
                         {{ item.expireDate }}
+                      </v-list-item-title>
+                      <v-list-item-title class="text-caption" v-if="item.remindDate">
+                        <v-icon small>mdi-alarm</v-icon>
+                        {{ item.remindDate + ' ' + (item.remindTime === null ? '' : item.remindTime) }}
                       </v-list-item-title>
                     </div>
                   </v-list-item-content>
@@ -68,7 +72,10 @@ export default {
     showReminderInfo(reminder) {
       this.selectedReminder = reminder;
       this.reminderDialog = true;
-    }
+    },
+    handleReminderComplete(id) {
+      console.log(id);
+    },
   },
   created() {
     this.$store.dispatch("getAllReminders");
