@@ -17,6 +17,7 @@
           </v-card-text>
           <v-card-actions>
             <v-text-field dense v-model="reminderData.title"
+                          :error-messages="reminderErrors.title"
                           class="custom-text-field-font-size">
               <template v-slot:label>
                     <span class="custom-text-field-font-size">
@@ -193,20 +194,26 @@ export default {
     }
   }),
   methods: {
-    saveReminder() {
+    async saveReminder() {
       const action = this.reminderData.id === null ? "saveNewReminder" : "updateReminder";
 
-      this.$store.dispatch(action, {
+      this.$store.commit("setReminderErrors", {errors: []});
+
+      await this.$store.dispatch(action, {
         id: this.reminderData.id,
         title: this.reminderData.title,
         expireDate: this.reminderData.expireDateFormatted,
         remindDate: this.reminderData.remindDateFormatted,
         remindTime: this.reminderData.remindTime
-      });
-      this.clearFields();
-      this.closeReminderDialog();
+      })
+
+      if (this.reminderErrors.length === 0) {
+        this.clearFields();
+        this.closeReminderDialog();
+      }
     },
     clearFields() {
+      this.$store.commit("setReminderErrors", {errors: []});
       this.reminderData.id = null;
       this.reminderData.title = "";
       this.reminderData.expireDateFormatted = null;
@@ -214,8 +221,10 @@ export default {
       this.reminderData.remindDateFormatted = null;
       this.reminderData.remindTime = null;
       this.remindDate = null;
+      this.visibility.remindCheckbox = false;
     },
     closeReminderDialog() {
+      this.clearFields();
       this.$emit('showReminderDialog');
     },
     formatDate(date) {
@@ -241,6 +250,11 @@ export default {
       this.$store.dispatch("deleteReminder", this.reminderData.id);
       this.closeReminderDialog();
       this.clearFields();
+    }
+  },
+  computed: {
+    reminderErrors() {
+      return this.$store.getters.reminderErrors;
     }
   },
   watch: {
