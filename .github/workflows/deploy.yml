@@ -95,7 +95,7 @@ jobs:
           command: |
             cd ${{secrets.PROJECT_FOLDER}}
             echo POSTGRES_USER=${{secrets.POSTGRES_USER}} > .env
-            echo POSTGRES_PASSWORD=${{secrets.POSTGRES_PASSWORD}} >> .env;
+            echo POSTGRES_PASSWORD=${{secrets.POSTGRES_PASSWORD}} >> .env
 
             if ${{ needs.changes-filter.outputs.backend-local}}; then
               docker stop backend-local
@@ -115,7 +115,7 @@ jobs:
               docker rmi verpul/homethings:frontend
             fi;
 
-            docker-compose --file docker-compose.yml --env-file .env up -d;
+            docker-compose --file docker-compose.yml --env-file .env up -d
             rm .env
     
 
