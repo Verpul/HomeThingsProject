@@ -4,27 +4,18 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  copy-compose:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Run command on remote server
-        uses: D3rHase/ssh-command-action@v0.2.2
+      - name: Copy docker-compose.yaml via SSH
+        uses: appleboy/scp-action@master
         with:
           host: ${{secrets.SSH_HOST}}
-          user: ${{secrets.SSH_USER}}
-          private_key: ${{secrets.SSH_PRIVATE_KEY}}
-          command: |
-            cd ${{secrets.PROJECT_FOLDER}};
-           
-            git checkout main;
-            git pull;
-            
-            echo POSTGRES_USER=${{secrets.POSTGRES_USER}} > .env;
-            echo POSTGRES_PASSWORD=${{secrets.POSTGRES_PASSWORD}} >> .env;
-            docker-compose --file docker-compose.yml down;
-            docker-compose --file docker-compose.yml --env-file .env up -d;
-            docker system prune --all --force;
-            rm .env;
+          username: ${{secrets.SSH_USER}}
+          key: ${{secrets.SSH_PRIVATE_KEY}}
+          source: "docker-compose.yml"
+          target: ${{secrets.PROJECT_FOLDER}}
+          overwrite: true
            
