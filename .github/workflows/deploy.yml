@@ -5,6 +5,7 @@ on:
 
 jobs:
   copy-compose:
+    name: Push docker-compose to remote server
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -18,4 +19,104 @@ jobs:
           source: "docker-compose.yml"
           target: ${{secrets.PROJECT_FOLDER}}
           overwrite: true
+
+  changes-filter:
+    name: Apply changes filter on modules
+    runs-on: ubuntu-latest
+    outputs:
+      backend-local: ${{ steps.filter.outputs.backend-local }}
+      backend-api: ${{ steps.filter.outputs.backend-api }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Apply changes filter
+        uses: dorny/paths-filter@v2 
+        id: filter
+        with:
+          filters: |
+            backend-local:
+              - 'local-service/**'
+            backend-api:
+              - 'api-service/**'
+            frontend:
+              - 'frontend-service/**'
+
+  build-and-push-images:
+    name: Push images to Dockerhub
+    runs-on: ubuntu-latest
+    needs: changes-filter
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Local backend build and push to Dockerhub
+        if: ${{ needs.changes-filter.outputs.backend-local == 'true' }}
+        uses: docker/build-push-action@v2
+        with:
+          file: /local-service/Dockerfile
+          push: true
+          tags: verpul/homethings:backend-local
+
+      - name: API backend build and push to Dockerhub
+        if: ${{ needs.changes-filter.outputs.backend-api == 'true' }}
+        uses: docker/build-push-action@v2
+        with:
+          file: /api-service/Dockerfile
+          push: true
+          tags: verpul/homethings:backend-api
+
+      - name: Frontend build and push to Dockerhub
+        if: ${{ needs.changes-filter.outputs.frontend == 'true' }}
+        uses: docker/build-push-action@v2
+        with:
+          file: /frontend-service/Dockerfile
+          push: true
+          tags: verpul/homethings:frontend
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: [ build-and-push-images, changes-filter, copy-compose ]
+    steps:
+      - name: Run command on remote server
+        uses: D3rHase/ssh-command-action@v0.2.2
+        with:
+          host: ${{secrets.SSH_HOST}}
+          user: ${{secrets.SSH_USER}}
+          private_key: ${{secrets.SSH_PRIVATE_KEY}}
+          command: |
+            cd ${{secrets.PROJECT_FOLDER}};
+            echo POSTGRES_USER=${{secrets.POSTGRES_USER}} > .env;
+            echo POSTGRES_PASSWORD=${{secrets.POSTGRES_PASSWORD}} >> .env;
+
+            if ${{ needs.paths-filter.outputs.backend-local}}; then
+              docker stop backend-local
+              docker rm backend-local
+              docker rmi verpul/homethings:backend-local
+            fi;
+
+            if ${{ needs.paths-filter.outputs.backend-api}}; then
+              docker stop backend-api
+              docker rm backend-api
+              docker rmi verpul/homethings:backend-api
+            fi;
+
+            if ${{ needs.paths-filter.outputs.frontend}}; then
+              docker stop frontend
+              docker rm frontend
+              docker rmi verpul/homethings:frontend
+            fi;
+
+            docker-compose --file docker-compose.yml --env-file .env up -d;
+            rm .env;
+    
+
            
