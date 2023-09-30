@@ -94,29 +94,29 @@ jobs:
           private_key: ${{secrets.SSH_PRIVATE_KEY}}
           command: |
             cd ${{secrets.PROJECT_FOLDER}}
-            echo POSTGRES_USER=${{secrets.POSTGRES_USER}} > .env;
-            echo POSTGRES_PASSWORD=${{secrets.POSTGRES_PASSWORD}} >> .env;
+            echo POSTGRES_USER=${{secrets.POSTGRES_USER}} > .env
+            echo POSTGRES_PASSWORD=${{secrets.POSTGRES_PASSWORD}} >> .env
 
             if ${{ needs.paths-filter.outputs.backend-local}}; then
               docker stop backend-local
               docker rm backend-local
               docker rmi verpul/homethings:backend-local
-            fi;
+            fi
 
             if ${{ needs.paths-filter.outputs.backend-api}}; then
               docker stop backend-api
               docker rm backend-api
               docker rmi verpul/homethings:backend-api
-            fi;
+            fi
 
             if ${{ needs.paths-filter.outputs.frontend}}; then
               docker stop frontend
               docker rm frontend
               docker rmi verpul/homethings:frontend
-            fi;
+            fi
 
-            docker-compose --file docker-compose.yml --env-file .env up -d;
-            rm .env;
+            docker-compose --file docker-compose.yml --env-file .env up -d
+            rm .env
     
 
            
