@@ -61,7 +61,7 @@ jobs:
         if: ${{ needs.changes-filter.outputs.backend-local == 'true' }}
         uses: docker/build-push-action@v2
         with:
-          file: /weight-service/Dockerfile
+          file: /local-service/Dockerfile
           push: true
           tags: verpul/homethings:backend-local
 
