@@ -23,6 +23,13 @@ public class RestExceptionHandler {
 
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(AssociationFoundException.class)
+    public String handleAssociationFoundError(AssociationFoundException exception) {
+        return exception.getMessage();
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationError(MethodArgumentNotValidException exception) {
         Map<String, String> errors = new HashMap<>();

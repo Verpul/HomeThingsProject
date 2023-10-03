@@ -2,6 +2,7 @@ package ru.verpul.DTO;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import ru.verpul.model.ReminderCategory;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
@@ -28,7 +29,7 @@ public class ReminderDTO {
     @Future(message = "Время напоминания не может быть меньше текущего")
     private LocalTime remindTime;
 
-
+    private Long categoryId;
 //    private Boolean repeatable;
 //
 //    private Boolean saveHistory;

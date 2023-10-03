@@ -5,6 +5,7 @@ const REMINDER_API_URL = process.env.VUE_APP_LOCAL_SERVICE_URL + '/reminder'
 const state = {
   reminders: [],
   reminderErrors: [],
+  categoryId: null
 }
 
 const mutations = {
@@ -13,12 +14,19 @@ const mutations = {
   },
   setReminderErrors(state, {errors}) {
     state.reminderErrors = errors
+  },
+  setCategoryId(state, categoryId) {
+    state.categoryId = categoryId;
   }
 }
 
 const actions = {
-  getAllReminders({commit}) {
-    axios.get(REMINDER_API_URL).then((response) => {
+  getAllReminders({commit, state}) {
+    axios.get(REMINDER_API_URL, {
+      params: {
+        categoryId: state.categoryId
+      }
+    }).then((response) => {
       commit('setReminders', {data: response.data})
     })
   },
@@ -29,8 +37,8 @@ const actions = {
       commit('setReminderErrors', {errors: errors.response.data})
     })
   },
-  updateReminder({dispatch, commit}, data) {
-    axios.put(`${REMINDER_API_URL}/${data.id}`, data).then(() => {
+  async updateReminder({dispatch, commit}, data) {
+    await axios.put(`${REMINDER_API_URL}/${data.id}`, data).then(() => {
       dispatch('getAllReminders');
     }).catch((errors) => {
       commit('setReminderErrors', {errors: errors.response.data})
@@ -49,6 +57,9 @@ const getters = {
   },
   reminderErrors(state) {
     return state.reminderErrors;
+  },
+  currentCategoryId(state) {
+    return state.categoryId;
   }
 }
 

@@ -18,11 +18,22 @@ VALUES ('2023-01-01', '62'),
 DELETE
 FROM reminders;
 ALTER
-SEQUENCE reminders_id_seq RESTART WITH 1;
+    SEQUENCE reminders_id_seq RESTART WITH 1;
 
-INSERT INTO reminders (title, expire_date, remind_date, remind_time)
-VALUES ('Напоминание без даты окончания', null, null, null),
-       ('Напоминание с датой окончания', '2023-04-09', null, null),
-       ('Напоминание с датой напоминания', '2023-04-09', '2023-06-06', null),
-       ('Напоминание с датой и временем напоминания', '2023-04-09', '2023-06-06', '09:30:00')
+DELETE
+FROM reminder_category;
+ALTER
+SEQUENCE reminder_category_id_seq RESTART WITH 1;
+
+INSERT INTO reminder_category (title)
+VALUES ('Категория 1'),
+       ('Категория 2');
+
+INSERT INTO reminders (title, expire_date, remind_date, remind_time, category_id)
+VALUES ('Напоминание без даты окончания', null, null, null, null),
+       ('Напоминание с датой окончания', '2023-04-09', null, null, null),
+       ('Напоминание с датой напоминания', '2023-04-09', '2023-06-06', null, null),
+       ('Напоминание с датой и временем напоминания', '2023-04-09', '2023-06-06', '09:30:00', null),
+       ('Напоминание с категорией 1', null, null, null, 1),
+       ('Напоминание с категорией 2', null, null, null, 2);
 

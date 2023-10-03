@@ -6,10 +6,11 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import ru.verpul.DTO.ReminderDTO;
 import ru.verpul.exception.NotFoundException;
+import ru.verpul.model.ReminderCategory;
 import ru.verpul.service.ReminderService;
 
 import javax.validation.Valid;
-import java.util.Set;
+import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -19,8 +20,8 @@ public class ReminderController {
     private final ReminderService reminderService;
 
     @GetMapping
-    public Set<ReminderDTO> getRemindersList() {
-        return reminderService.getRemindersList();
+    public List<ReminderDTO> getRemindersList(@RequestParam(name = "categoryId", required = false) Long categoryId) {
+        return reminderService.getRemindersList(categoryId);
     }
 
     @PostMapping

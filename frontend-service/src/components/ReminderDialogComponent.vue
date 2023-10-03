@@ -156,6 +156,20 @@
         </v-col>
         <v-divider vertical></v-divider>
         <v-col>
+          <v-card-text class="pa-0 mt-3 mb-5">Опции</v-card-text>
+          <v-select :items="reminderCategories"
+                    item-text="title"
+                    item-value="id"
+                    v-model="reminderData.reminderCategory"
+                    class="custom-text-field-font-size"
+                    clearable
+                    dense>
+            <template v-slot:label>
+                            <span class="custom-text-field-font-size">
+                              Категория
+                            </span>
+            </template>
+          </v-select>
           <v-checkbox v-model="visibility.remindCheckbox" dense>
             <template v-slot:label>
               <span class="text-body-2">
@@ -190,7 +204,8 @@ export default {
       title: "",
       expireDateFormatted: null,
       remindTime: null,
-      remindDateFormatted: null
+      remindDateFormatted: null,
+      reminderCategory: null
     }
   }),
   methods: {
@@ -204,7 +219,8 @@ export default {
         title: this.reminderData.title,
         expireDate: this.reminderData.expireDateFormatted,
         remindDate: this.reminderData.remindDateFormatted,
-        remindTime: this.reminderData.remindTime
+        remindTime: this.reminderData.remindTime,
+        categoryId: this.reminderData.reminderCategory
       })
 
       if (this.reminderErrors.length === 0) {
@@ -221,6 +237,7 @@ export default {
       this.reminderData.remindDateFormatted = null;
       this.reminderData.remindTime = null;
       this.remindDate = null;
+      this.reminderData.reminderCategory = null;
       this.visibility.remindCheckbox = false;
     },
     closeReminderDialog() {
@@ -242,6 +259,7 @@ export default {
         this.reminderData.expireDateFormatted = this.selectedReminder.expireDate;
         this.reminderData.remindDateFormatted = this.selectedReminder.remindDate;
         this.reminderData.remindTime = this.selectedReminder.remindTime;
+        this.reminderData.reminderCategory = this.selectedReminder.categoryId;
 
         this.visibility.remindCheckbox = this.selectedReminder.remindDate !== null;
       }
@@ -255,6 +273,9 @@ export default {
   computed: {
     reminderErrors() {
       return this.$store.getters.reminderErrors;
+    },
+    reminderCategories() {
+      return this.$store.getters.reminderCategories;
     }
   },
   watch: {

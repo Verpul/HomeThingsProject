@@ -5,16 +5,71 @@
       <v-container fluid>
         <v-card max-width="800" class="mx-auto"
                 flat>
-          <div class="text-end">
-            <v-btn
-                small
-                outlined
-                color="primary"
-                @click="showReminderDialog()"
-            >
-              Добавить напоминание
-            </v-btn>
-          </div>
+          <v-row>
+            <v-col class="text-start">
+              <template>
+                <div>
+                  <v-menu offset-y>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                          small
+                          outlined
+                          color="purple"
+                          v-bind="attrs"
+                          v-on="on"
+                      >
+                        <span v-text="'Категория:'"></span>
+                        <span class="red--text text--lighten-2 ms-1"
+                              v-text="currentCategory === null ? 'Все' : currentCategory.title">Test</span>
+                      </v-btn>
+                      <v-btn
+                          icon
+                          color="red"
+                          small
+                          v-show="currentCategory !== null"
+                          @click="setReminderCategory(null)"
+                          class="ms-1"
+                      >
+                        <v-icon>mdi-close</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list >
+                      <v-list-item
+                          link
+                          @click="reminderCategoryDialog = true"
+                      >
+                        <v-list-item-title class="text-body-2">Добавить категорию...</v-list-item-title>
+                      </v-list-item>
+                      <v-divider></v-divider>
+                      <v-list-item
+                          v-for="item in categoriesList"
+                          :key="item.id"
+                          link
+                          @click="setReminderCategory(item.id)"
+                      >
+                        <v-list-item-title class="text-body-2">{{ item.title }}</v-list-item-title>
+                        <v-list-item-icon>
+                          <v-btn icon small @click.stop="showReminderCategoryInfo(item)">
+                            <v-icon small>mdi-pencil-outline</v-icon>
+                          </v-btn>
+                        </v-list-item-icon>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </div>
+              </template>
+            </v-col>
+            <v-col class="text-end">
+              <v-btn
+                  small
+                  outlined
+                  color="primary"
+                  @click="showReminderDialog()"
+              >
+                Добавить напоминание
+              </v-btn>
+            </v-col>
+          </v-row>
           <v-list flat>
             <v-list-item-group>
               <template v-for="(item, index) in remindersList">
@@ -52,41 +107,72 @@
       <ReminderDialogComponent @showReminderDialog="showReminderDialog"
                                :selectedReminder="selectedReminder"></ReminderDialogComponent>
     </v-dialog>
+
+    <v-dialog v-model="reminderCategoryDialog" max-width="600" persistent>
+      <ReminderCategoryComponent @showReminderCategoryDialog="showReminderCategoryDialog"
+                                 :selectedReminderCategory="selectedReminderCategory"
+      ></ReminderCategoryComponent>
+    </v-dialog>
   </v-app>
 </template>
 
 <script>
 import ReminderDialogComponent from "@/components/ReminderDialogComponent";
+import ReminderCategoryComponent from "@/components/ReminderCategoryComponent";
 
 export default {
   name: "ReminderComponent",
   data: () => ({
     reminderDialog: false,
-    selectedReminder: null
+    reminderCategoryDialog: false,
+    selectedReminder: null,
+    selectedReminderCategory: null
   }),
   methods: {
     showReminderDialog() {
       this.selectedReminder = null;
       this.reminderDialog = !this.reminderDialog;
     },
+    showReminderCategoryDialog() {
+      this.selectedCategory = null;
+      this.reminderCategoryDialog = !this.reminderCategoryDialog;
+    },
     showReminderInfo(reminder) {
       this.selectedReminder = reminder;
       this.reminderDialog = true;
     },
-    handleReminderComplete(id) {
-      console.log(id);
+    showReminderCategoryInfo(category) {
+      this.selectedReminderCategory = category;
+      this.reminderCategoryDialog = true;
+    },
+    handleReminderComplete(reminderId) {
+      console.log(reminderId);
+    },
+    setReminderCategory(categoryId) {
+      this.$store.commit("setCategoryId", categoryId);
+      this.$store.dispatch("getAllReminders");
     },
   },
   created() {
     this.$store.dispatch("getAllReminders");
+    this.$store.dispatch("getAllReminderCategories")
   },
   computed: {
     remindersList() {
       return this.$store.getters.reminders;
+    },
+    categoriesList() {
+      return this.$store.getters.reminderCategories;
+    },
+    currentCategory() {
+      let categoryId = this.$store.getters.currentCategoryId;
+
+      return categoryId === null ?
+          null : this.$store.getters.reminderCategories.find(category => category.id === categoryId);
     }
   },
   components: {
-    ReminderDialogComponent
+    ReminderDialogComponent, ReminderCategoryComponent
   }
 }
 </script>

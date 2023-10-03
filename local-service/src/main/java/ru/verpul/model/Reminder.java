@@ -2,16 +2,10 @@ package ru.verpul.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.verpul.enums.Period;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -29,6 +23,10 @@ public class Reminder extends BaseEntity{
 
     @Column(name = "remind_time")
     private LocalTime remindTime;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private ReminderCategory category;
 
 //    @Column(name = "repeatable", nullable = false)
 //    private Boolean repeatable;
