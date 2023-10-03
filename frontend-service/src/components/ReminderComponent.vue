@@ -33,7 +33,7 @@
                         <v-icon>mdi-close</v-icon>
                       </v-btn>
                     </template>
-                    <v-list >
+                    <v-list>
                       <v-list-item
                           link
                           @click="reminderCategoryDialog = true"
@@ -83,6 +83,10 @@
                   </v-list-item-action>
                   <v-list-item-content>
                     <v-list-item-title class="text-body-2 font-weight-medium">{{ item.title }}</v-list-item-title>
+                    <v-list-item-title class="text-caption mt-2 col-6 pa-0" v-if="item.comment">
+                      <v-icon small>mdi-comment-outline</v-icon>
+                      <span class="text-truncate ms-1" style="max-width: 10px">{{ item.comment }}</span>
+                    </v-list-item-title>
                     <div class="mt-2">
                       <v-list-item-title class="text-caption float-left me-2" v-if="item.expireDate">
                         <v-icon small>mdi-calendar</v-icon>
@@ -134,7 +138,7 @@ export default {
       this.reminderDialog = !this.reminderDialog;
     },
     showReminderCategoryDialog() {
-      this.selectedCategory = null;
+      this.selectedReminderCategory = null;
       this.reminderCategoryDialog = !this.reminderCategoryDialog;
     },
     showReminderInfo(reminder) {

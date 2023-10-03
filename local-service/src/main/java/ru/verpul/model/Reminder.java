@@ -24,9 +24,13 @@ public class Reminder extends BaseEntity{
     @Column(name = "remind_time")
     private LocalTime remindTime;
 
+    @Column(name = "comment", length = 500)
+    private String comment;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private ReminderCategory category;
+
 
 //    @Column(name = "repeatable", nullable = false)
 //    private Boolean repeatable;
@@ -44,6 +48,4 @@ public class Reminder extends BaseEntity{
 //    @Column(name = "price", length = 10)
 //    private String price;
 
-//    @OneToMany(mappedBy = "reminder", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ReminderDate> reminderDates = new ArrayList<>();
 }

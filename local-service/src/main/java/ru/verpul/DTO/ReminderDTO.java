@@ -2,6 +2,7 @@ package ru.verpul.DTO;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import ru.verpul.model.ReminderCategory;
 
 import javax.validation.constraints.Future;
@@ -28,6 +29,9 @@ public class ReminderDTO {
     @JsonFormat(pattern = "HH:mm")
     @Future(message = "Время напоминания не может быть меньше текущего")
     private LocalTime remindTime;
+
+    @Length(max = 500, message = "Комментарий не может превышать 500 символов")
+    private String comment;
 
     private Long categoryId;
 //    private Boolean repeatable;

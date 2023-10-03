@@ -147,6 +147,30 @@
               </v-col>
             </v-row>
           </v-card-actions>
+          <v-card-actions>
+            <v-row>
+              <v-col>
+                <v-expand-transition>
+                  <div v-if="visibility.commentCheckbox">
+                    <v-textarea dense
+                                outlined
+                                auto-grow
+                                counter="500"
+                                rows="3"
+                                v-model="reminderData.comment"
+                                class="custom-text-field-font-size"
+                    >
+                      <template v-slot:label>
+                            <span class="custom-text-field-font-size">
+                              Комментарий
+                            </span>
+                      </template>
+                    </v-textarea>
+                  </div>
+                </v-expand-transition>
+              </v-col>
+            </v-row>
+          </v-card-actions>
           <div class="mt-10">
             <v-card-actions class="v-btn--absolute mb-2" style="bottom: 0">
               <v-btn small outlined color="success" @click="saveReminder()">Сохранить</v-btn>
@@ -177,6 +201,13 @@
               </span>
             </template>
           </v-checkbox>
+          <v-checkbox v-model="visibility.commentCheckbox" dense class="mt-n4">
+            <template v-slot:label>
+              <span class="text-body-2">
+                Комментарий
+              </span>
+            </template>
+          </v-checkbox>
           <v-card-actions class="v-btn--absolute mb-2" style="bottom: 0">
             <v-btn small outlined color="red" @click="deleteReminder()">Удалить</v-btn>
           </v-card-actions>
@@ -197,7 +228,8 @@ export default {
       expireDateMenu: false,
       remindCheckbox: false,
       remindTimeMenu: false,
-      remindDateMenu: false
+      remindDateMenu: false,
+      commentCheckbox: false
     },
     reminderData: {
       id: null,
@@ -205,7 +237,8 @@ export default {
       expireDateFormatted: null,
       remindTime: null,
       remindDateFormatted: null,
-      reminderCategory: null
+      reminderCategory: null,
+      comment: null
     }
   }),
   methods: {
@@ -220,7 +253,8 @@ export default {
         expireDate: this.reminderData.expireDateFormatted,
         remindDate: this.reminderData.remindDateFormatted,
         remindTime: this.reminderData.remindTime,
-        categoryId: this.reminderData.reminderCategory
+        categoryId: this.reminderData.reminderCategory,
+        comment: this.reminderData.comment
       })
 
       if (this.reminderErrors.length === 0) {
@@ -239,6 +273,8 @@ export default {
       this.remindDate = null;
       this.reminderData.reminderCategory = null;
       this.visibility.remindCheckbox = false;
+      this.reminderData.comment = null;
+      this.visibility.commentCheckbox = false;
     },
     closeReminderDialog() {
       this.clearFields();
@@ -260,8 +296,10 @@ export default {
         this.reminderData.remindDateFormatted = this.selectedReminder.remindDate;
         this.reminderData.remindTime = this.selectedReminder.remindTime;
         this.reminderData.reminderCategory = this.selectedReminder.categoryId;
+        this.reminderData.comment = this.selectedReminder.comment;
 
         this.visibility.remindCheckbox = this.selectedReminder.remindDate !== null;
+        this.visibility.commentCheckbox = this.selectedReminder.comment !== null;
       }
     },
     deleteReminder() {

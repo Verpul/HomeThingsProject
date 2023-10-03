@@ -53,6 +53,7 @@ public class ReminderService {
             reminder.setExpireDate(reminderDTO.getExpireDate());
             reminder.setRemindDate(reminderDTO.getRemindDate());
             reminder.setRemindTime(reminderDTO.getRemindTime());
+            reminder.setComment(reminderDTO.getComment());
 
             Optional<ReminderCategory> foundCategory = getReminderCategory(reminderDTO);
             reminder.setCategory(foundCategory.orElse(null));
