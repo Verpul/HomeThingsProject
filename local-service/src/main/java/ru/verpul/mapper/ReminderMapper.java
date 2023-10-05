@@ -8,6 +8,7 @@ import ru.verpul.model.Reminder;
 @Mapper(componentModel = "spring")
 public interface ReminderMapper {
     @Mapping(source = "category.id", target = "categoryId")
+    @Mapping(source = "parent.id", target = "parentId")
     ReminderDTO reminderToReminderDTO(Reminder reminder);
 
     Reminder reminderDTOToReminder(ReminderDTO reminderDTO);

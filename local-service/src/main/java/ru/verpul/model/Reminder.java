@@ -2,10 +2,13 @@ package ru.verpul.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,8 +31,13 @@ public class Reminder extends BaseEntity{
     @Column(name = "comment", length = 500)
     private String comment;
 
-    @Column(name = "parent_id")
-    private Long parentId;
+    @JoinColumn(name = "parent_id")
+    @ManyToOne
+    private Reminder parent;
+
+    @JoinColumn(name = "parent_id")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Reminder> children = new ArrayList<>();
 
     @Column(name = "nesting_depth")
     private Integer nestingDepth;
@@ -39,7 +47,7 @@ public class Reminder extends BaseEntity{
     private ReminderCategory category;
 
 
-//    @Column(name = "repeatable", nullable = false)
+    //    @Column(name = "repeatable", nullable = false)
 //    private Boolean repeatable;
 //
 //    @Column(name = "save_history", nullable = false)

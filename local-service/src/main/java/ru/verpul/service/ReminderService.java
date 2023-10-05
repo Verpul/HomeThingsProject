@@ -34,14 +34,14 @@ public class ReminderService {
                 .map(reminderMapper::reminderToReminderDTO)
                 .collect(Collectors.toList());
 
-        return sortHierarchically(reminderDTOList);
+        return treeSort(reminderDTOList);
     }
 
     @Transactional
     public void createReminder(ReminderDTO reminderDTO) {
         Reminder reminderToSave = reminderMapper.reminderDTOToReminder(reminderDTO);
 
-        setReminderCategoryAndNestedDepth(reminderToSave, reminderDTO.getCategoryId());
+        setReminderCategoryAndNestedDepthAndParent(reminderToSave, reminderDTO);
 
         reminderRepository.save(reminderToSave);
     }
@@ -57,9 +57,8 @@ public class ReminderService {
             reminder.setRemindDate(reminderDTO.getRemindDate());
             reminder.setRemindTime(reminderDTO.getRemindTime());
             reminder.setComment(reminderDTO.getComment());
-            reminder.setParentId(reminderDTO.getParentId());
 
-            setReminderCategoryAndNestedDepth(reminder, reminderDTO.getCategoryId());
+            setReminderCategoryAndNestedDepthAndParent(reminder, reminderDTO);
 
             return reminderRepository.save(reminder);
         }
@@ -71,24 +70,25 @@ public class ReminderService {
         reminderRepository.deleteById(id);
     }
 
-    private void setReminderCategoryAndNestedDepth(Reminder reminderToSave, Long reminderCategoryId) {
-        if (reminderToSave.getParentId() != null) {
-            Reminder parentReminder = reminderRepository.findById(reminderToSave.getParentId())
+    private void setReminderCategoryAndNestedDepthAndParent(Reminder reminderToSave, ReminderDTO reminderSource) {
+        if (reminderSource.getParentId() != null) {
+            Reminder parentReminder = reminderRepository.findById(reminderSource.getParentId())
                     .orElseThrow(() -> new NotFoundException("Напоминание-родитель с такими данными не найдено!"));
 
             int nestingDepth = parentReminder.getNestingDepth() == null ? 1 : parentReminder.getNestingDepth() + 1;
             reminderToSave.setNestingDepth(nestingDepth);
             reminderToSave.setCategory(parentReminder.getCategory());
+            reminderToSave.setParent(parentReminder);
         } else {
-            ReminderCategory categoryToSave = reminderCategoryId == null ?
-                    null : reminderCategoryRepository.findById(reminderCategoryId).orElse(null);
+            ReminderCategory categoryToSave = reminderSource.getCategoryId() == null ?
+                    null : reminderCategoryRepository.findById(reminderSource.getCategoryId()).orElse(null);
 
             reminderToSave.setCategory(categoryToSave);
             reminderToSave.setNestingDepth(null);
         }
     }
 
-    private List<ReminderDTO> sortHierarchically(List<ReminderDTO> reminderDTOList) {
+    private List<ReminderDTO> treeSort(List<ReminderDTO> reminderDTOList) {
         Map<Long, List<ReminderDTO>> remindersMap = new HashMap<>();
 
         for (ReminderDTO reminder : reminderDTOList) {
@@ -99,16 +99,16 @@ public class ReminderService {
         }
 
         List<ReminderDTO> sortedReminderDTOs = new ArrayList<>();
-        sortTree(null, remindersMap, sortedReminderDTOs);
+        sortChildren(null, remindersMap, sortedReminderDTOs);
 
         return sortedReminderDTOs;
     }
 
-    private void sortTree(Long parentId, Map<Long, List<ReminderDTO>> remindersMap, List<ReminderDTO> sortedReminders) {
+    private void sortChildren(Long parentId, Map<Long, List<ReminderDTO>> remindersMap, List<ReminderDTO> sortedReminders) {
         if (remindersMap.containsKey(parentId)) {
             for (ReminderDTO reminder : remindersMap.get(parentId)) {
                 sortedReminders.add(reminder);
-                sortTree(reminder.getId(), remindersMap, sortedReminders);
+                sortChildren(reminder.getId(), remindersMap, sortedReminders);
             }
         }
     }

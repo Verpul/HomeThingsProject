@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ReminderRepository extends JpaRepository<Reminder, Long> {
 
-    @Query("SELECT r FROM  Reminder r ORDER BY r.parentId DESC, r.expireDate, r.id")
+    @Query("SELECT r FROM  Reminder r ORDER BY r.parent.id DESC, r.expireDate, r.id")
     List<Reminder> findAllOrderByParentIdAndExpireDate();
 
     @Query("SELECT r FROM Reminder r WHERE r.category.id = :category")
