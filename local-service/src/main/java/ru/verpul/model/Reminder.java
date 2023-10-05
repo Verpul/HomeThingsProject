@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,6 +27,12 @@ public class Reminder extends BaseEntity{
 
     @Column(name = "comment", length = 500)
     private String comment;
+
+    @Column(name = "parent_id")
+    private Long parentId;
+
+    @Column(name = "nesting_depth")
+    private Integer nestingDepth;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")

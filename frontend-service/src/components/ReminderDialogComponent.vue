@@ -7,6 +7,12 @@
     <v-container>
       <v-row>
         <v-col cols="8">
+          <v-card outlined v-if="reminderData.parentId !== null">
+            <v-card-subtitle class="pa-0 mt-1">
+              <v-icon small class="ms-1 mt-n1">mdi-arrow-up-left</v-icon>
+              <span class="ms-1" style="font-size: 12px">{{ parentReminderTitle }}</span>
+            </v-card-subtitle>
+          </v-card>
           <v-card-text class="pa-0 mb-2">
             <v-btn icon color="primary">
               <v-icon>
@@ -187,7 +193,9 @@
                     v-model="reminderData.reminderCategory"
                     class="custom-text-field-font-size"
                     clearable
-                    dense>
+                    dense
+                    :disabled="reminderData.parentId !== null"
+          >
             <template v-slot:label>
                             <span class="custom-text-field-font-size">
                               Категория
@@ -224,12 +232,13 @@ export default {
   data: () => ({
     date: null,
     remindDate: null,
+    parentReminderTitle: null,
     visibility: {
       expireDateMenu: false,
       remindCheckbox: false,
       remindTimeMenu: false,
       remindDateMenu: false,
-      commentCheckbox: false
+      commentCheckbox: false,
     },
     reminderData: {
       id: null,
@@ -238,7 +247,8 @@ export default {
       remindTime: null,
       remindDateFormatted: null,
       reminderCategory: null,
-      comment: null
+      comment: null,
+      parentId: null
     }
   }),
   methods: {
@@ -254,7 +264,8 @@ export default {
         remindDate: this.reminderData.remindDateFormatted,
         remindTime: this.reminderData.remindTime,
         categoryId: this.reminderData.reminderCategory,
-        comment: this.reminderData.comment
+        comment: this.reminderData.comment,
+        parentId: this.reminderData.parentId
       })
 
       if (this.reminderErrors.length === 0) {
@@ -275,6 +286,8 @@ export default {
       this.visibility.remindCheckbox = false;
       this.reminderData.comment = null;
       this.visibility.commentCheckbox = false;
+      this.reminderData.parentId = null;
+      this.parentReminderTitle = null;
     },
     closeReminderDialog() {
       this.clearFields();
@@ -298,6 +311,10 @@ export default {
         this.reminderData.reminderCategory = this.selectedReminder.categoryId;
         this.reminderData.comment = this.selectedReminder.comment;
 
+        if (this.selectedReminder.parentId !== null) {
+          this.setParentIdTitle(this.selectedReminder.parentId);
+        }
+
         this.visibility.remindCheckbox = this.selectedReminder.remindDate !== null;
         this.visibility.commentCheckbox = this.selectedReminder.comment !== null;
       }
@@ -306,6 +323,15 @@ export default {
       this.$store.dispatch("deleteReminder", this.reminderData.id);
       this.closeReminderDialog();
       this.clearFields();
+    },
+    setParentIdTitle(id) {
+      const foundReminder = this.$store.getters.reminders.find(reminder => reminder.id === id);
+
+      if (foundReminder) {
+        this.parentReminderTitle = foundReminder.title;
+        this.reminderData.parentId = id;
+        this.reminderData.reminderCategory = foundReminder.categoryId;
+      }
     }
   },
   computed: {
@@ -326,13 +352,20 @@ export default {
     selectedReminder() {
       this.handleSelectedReminder();
     },
+    parentId(id) {
+      this.setParentIdTitle(id);
+    }
   },
   props: [
-    "selectedReminder"
+    "selectedReminder", "parentId"
   ],
   created() {
     this.handleSelectedReminder();
-  }
+
+    if (this.parentId !== null) {
+      this.setParentIdTitle(this.parentId);
+    }
+  },
 }
 </script>
 

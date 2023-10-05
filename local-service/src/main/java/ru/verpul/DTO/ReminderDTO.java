@@ -33,6 +33,10 @@ public class ReminderDTO {
     @Length(max = 500, message = "Комментарий не может превышать 500 символов")
     private String comment;
 
+    private Long parentId;
+
+    private Integer nestingDepth;
+
     private Long categoryId;
 //    private Boolean repeatable;
 //
