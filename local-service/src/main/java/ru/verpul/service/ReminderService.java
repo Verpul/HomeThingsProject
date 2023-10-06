@@ -4,13 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.verpul.DTO.ReminderDTO;
+import ru.verpul.enums.ReminderPeriod;
 import ru.verpul.exception.NotFoundException;
 import ru.verpul.mapper.ReminderMapper;
 import ru.verpul.model.Reminder;
 import ru.verpul.model.ReminderCategory;
 import ru.verpul.repository.ReminderCategoryRepository;
 import ru.verpul.repository.ReminderRepository;
+import ru.verpul.util.ReminderUtil;
 
+import javax.swing.text.html.parser.Entity;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,23 +50,22 @@ public class ReminderService {
     }
 
     @Transactional
-    public Reminder updateReminder(Long id, ReminderDTO reminderDTO) {
-        Optional<Reminder> foundReminder = reminderRepository.findById(id);
+    public void updateReminder(Long id, ReminderDTO reminderDTO) {
+        reminderRepository.findById(id)
+                .map(reminder -> {
+                    reminder.setTitle(reminderDTO.getTitle());
+                    reminder.setExpireDate(reminderDTO.getExpireDate());
+                    reminder.setRemindDate(reminderDTO.getRemindDate());
+                    reminder.setRemindTime(reminderDTO.getRemindTime());
+                    reminder.setComment(reminderDTO.getComment());
+                    reminder.setPeriodic(reminderDTO.getPeriodic());
+                    reminder.setPeriod(ReminderPeriod.findByTitle(reminderDTO.getPeriod()));
+                    reminder.setPeriodicity(reminderDTO.getPeriodicity());
 
-        if (foundReminder.isPresent()) {
-            Reminder reminder = foundReminder.get();
-            reminder.setTitle(reminderDTO.getTitle());
-            reminder.setExpireDate(reminderDTO.getExpireDate());
-            reminder.setRemindDate(reminderDTO.getRemindDate());
-            reminder.setRemindTime(reminderDTO.getRemindTime());
-            reminder.setComment(reminderDTO.getComment());
+                    setReminderCategoryAndNestedDepthAndParent(reminder, reminderDTO);
 
-            setReminderCategoryAndNestedDepthAndParent(reminder, reminderDTO);
-
-            return reminderRepository.save(reminder);
-        }
-
-        return null;
+                    return reminderRepository.save(reminder);
+                }).orElseThrow(() ->  new NotFoundException("Напоминание с id = " + id + " не найдено"));
     }
 
     public void deleteReminder(Long id) {

@@ -3,6 +3,9 @@
     <v-card-title>
       <span class="text-body-1">Напоминание</span>
     </v-card-title>
+    <v-card-actions class="v-btn--absolute" style="top: 5px; right: 0">
+      <v-btn small outlined color="red" @click="deleteReminder()">Удалить</v-btn>
+    </v-card-actions>
     <v-divider></v-divider>
     <v-container>
       <v-row>
@@ -66,13 +69,13 @@
               ></v-date-picker>
             </v-menu>
           </v-card-actions>
-          <v-card-actions>
+          <v-card-actions class="py-0">
             <v-row>
               <v-card-text class="pa-0 ms-3 mb-2 mt-1" v-if="visibility.remindCheckbox">
-                <v-icon small>mdi-calendar</v-icon>
-                <span class="ms-2">Оповещения</span>
+                <v-icon small>mdi-alarm</v-icon>
+                <span class="ms-2">Настройка оповещения</span>
               </v-card-text>
-              <v-col>
+              <v-col class="pt-0">
                 <v-menu
                     ref="visibility.remindDateMenu"
                     v-model="visibility.remindDateMenu"
@@ -110,7 +113,7 @@
                   ></v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col>
+              <v-col class="pt-0">
                 <v-menu
                     ref="timeMenu"
                     v-model="visibility.remindTimeMenu"
@@ -153,11 +156,51 @@
               </v-col>
             </v-row>
           </v-card-actions>
-          <v-card-actions>
+          <v-card-actions class="py-0">
+            <v-row>
+              <v-card-text class="pa-0 ms-3 mb-2 mt-3" v-if="reminderData.periodic">
+                <v-icon small>mdi-sync</v-icon>
+                <span class="ms-2">Настройка периодизации</span>
+              </v-card-text>
+              <v-col class="pt-0">
+                <v-expand-transition>
+                  <div v-if="reminderData.periodic">
+                    <v-select :items="periods"
+                              v-model="reminderData.period"
+                              class="custom-text-field-font-size"
+                              clearable
+                              dense
+                    >
+                      <template v-slot:label>
+                            <span class="custom-text-field-font-size">
+                              Период
+                            </span>
+                      </template>
+                    </v-select>
+                  </div>
+                </v-expand-transition>
+              </v-col>
+              <v-col class="pt-0">
+                <v-expand-transition>
+                  <div v-if="reminderData.periodic">
+                    <v-text-field type="number" dense v-model="reminderData.periodicity"
+                                  class="custom-text-field-font-size">
+                      <template v-slot:label>
+                    <span class="custom-text-field-font-size">
+                      Периодичность
+                    </span>
+                      </template>
+                    </v-text-field>
+                  </div>
+                </v-expand-transition>
+              </v-col>
+            </v-row>
+          </v-card-actions>
+          <v-card-actions class="py-0">
             <v-row>
               <v-col>
                 <v-expand-transition>
-                  <div v-if="visibility.commentCheckbox">
+                  <div v-if="visibility.commentCheckbox" class="mt-3">
                     <v-textarea dense
                                 outlined
                                 auto-grow
@@ -205,7 +248,14 @@
           <v-checkbox v-model="visibility.remindCheckbox" dense>
             <template v-slot:label>
               <span class="text-body-2">
-                Оповещения
+                Оповещение
+              </span>
+            </template>
+          </v-checkbox>
+          <v-checkbox v-model="reminderData.periodic" dense class="mt-n4">
+            <template v-slot:label>
+              <span class="text-body-2">
+                Периодическая
               </span>
             </template>
           </v-checkbox>
@@ -216,9 +266,6 @@
               </span>
             </template>
           </v-checkbox>
-          <v-card-actions class="v-btn--absolute mb-2" style="bottom: 0">
-            <v-btn small outlined color="red" @click="deleteReminder()">Удалить</v-btn>
-          </v-card-actions>
         </v-col>
       </v-row>
     </v-container>
@@ -248,8 +295,12 @@ export default {
       remindDateFormatted: null,
       reminderCategory: null,
       comment: null,
-      parentId: null
-    }
+      parentId: null,
+      period: null,
+      periodicity: null,
+      periodic: false
+    },
+    periods: ['Минута', 'Час', 'День', 'Неделя', 'Месяц', 'Год']
   }),
   methods: {
     async saveReminder() {
@@ -265,7 +316,10 @@ export default {
         remindTime: this.reminderData.remindTime,
         categoryId: this.reminderData.reminderCategory,
         comment: this.reminderData.comment,
-        parentId: this.reminderData.parentId
+        parentId: this.reminderData.parentId,
+        periodic: this.reminderData.periodic,
+        period: this.reminderData.period,
+        periodicity: this.reminderData.periodicity
       })
 
       if (this.reminderErrors.length === 0) {
@@ -288,6 +342,9 @@ export default {
       this.visibility.commentCheckbox = false;
       this.reminderData.parentId = null;
       this.parentReminderTitle = null;
+      this.reminderData.periodic = false;
+      this.reminderData.period = null;
+      this.reminderData.periodicity = null;
     },
     closeReminderDialog() {
       this.clearFields();
@@ -310,6 +367,9 @@ export default {
         this.reminderData.remindTime = this.selectedReminder.remindTime;
         this.reminderData.reminderCategory = this.selectedReminder.categoryId;
         this.reminderData.comment = this.selectedReminder.comment;
+        this.reminderData.periodic = this.selectedReminder.periodic;
+        this.reminderData.period = this.selectedReminder.period;
+        this.reminderData.periodicity = this.selectedReminder.periodicity;
 
         if (this.selectedReminder.parentId !== null) {
           this.setParentIdTitle(this.selectedReminder.parentId);

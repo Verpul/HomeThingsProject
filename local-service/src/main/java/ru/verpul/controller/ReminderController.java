@@ -33,9 +33,7 @@ public class ReminderController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateReminder(@PathVariable Long id, @Valid @RequestBody ReminderDTO reminderDTO) {
-        if (reminderService.updateReminder(id, reminderDTO) == null) {
-            throw new NotFoundException("Запись с id = " + id + " не найдена");
-        }
+        reminderService.updateReminder(id, reminderDTO);
     }
 
     @DeleteMapping("/{id}")

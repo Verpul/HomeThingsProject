@@ -3,7 +3,6 @@ package ru.verpul.DTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
-import ru.verpul.model.ReminderCategory;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
@@ -38,15 +37,12 @@ public class ReminderDTO {
     private Integer nestingDepth;
 
     private Long categoryId;
-//    private Boolean repeatable;
-//
-//    private Boolean saveHistory;
-//
-//    private Period period;
-//
-//    private Integer periodLength;
-//
-//    private String price;
-//
-//    private Set<ReminderDateDTO> reminderDates = new HashSet<>();
+
+    private Boolean periodic;
+
+    private String period;
+
+    private Integer periodicity;
+
+    private String declensionedPeriod;
 }

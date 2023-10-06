@@ -130,6 +130,10 @@
                           <v-icon small>mdi-alarm</v-icon>
                           {{ item.remindDate + ' ' + (item.remindTime === null ? '' : item.remindTime) }}
                         </v-list-item-title>
+                        <v-list-item-title class="text-caption" v-if="item.declensionedPeriod">
+                          <v-icon small>mdi-sync</v-icon>
+                          {{ item.declensionedPeriod }}
+                        </v-list-item-title>
                       </div>
                     </v-list-item-action-text>
                   </v-list-item>

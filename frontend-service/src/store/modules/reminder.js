@@ -5,7 +5,7 @@ const REMINDER_API_URL = process.env.VUE_APP_LOCAL_SERVICE_URL + '/reminder'
 const state = {
   reminders: [],
   reminderErrors: [],
-  categoryId: null
+  categoryId: null,
 }
 
 const mutations = {
@@ -17,7 +17,7 @@ const mutations = {
   },
   setCategoryId(state, categoryId) {
     state.categoryId = categoryId;
-  }
+  },
 }
 
 const actions = {
@@ -60,7 +60,7 @@ const getters = {
   },
   currentCategoryId(state) {
     return state.categoryId;
-  }
+  },
 }
 
 export default {

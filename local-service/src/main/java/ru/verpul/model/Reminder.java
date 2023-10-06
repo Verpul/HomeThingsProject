@@ -2,8 +2,7 @@ package ru.verpul.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import ru.verpul.enums.ReminderPeriod;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -15,7 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "reminders")
-public class Reminder extends BaseEntity{
+public class Reminder extends BaseEntity {
     @Column(name = "title", nullable = false, length = 200)
     private String title;
 
@@ -46,21 +45,21 @@ public class Reminder extends BaseEntity{
     @JoinColumn(name = "category_id")
     private ReminderCategory category;
 
+    @Column(name = "periodic", nullable = false)
+    private Boolean periodic;
 
-    //    @Column(name = "repeatable", nullable = false)
-//    private Boolean repeatable;
-//
-//    @Column(name = "save_history", nullable = false)
-//    private Boolean saveHistory;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "period")
+    private ReminderPeriod period;
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "period")
-//    private Period period;
+    @Column(name = "periodicity")
+    private Integer periodicity;
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "parent_entity_id")
+//    private ParentEntity parentEntity;
 //
-//    @Column(name = "period_length")
-//    private Integer periodLength;
-//
-//    @Column(name = "price", length = 10)
-//    private String price;
+//    @Column(name = "parent_entity_id", insertable = false, updatable = false)
+//    private Long parentId;
 
 }
