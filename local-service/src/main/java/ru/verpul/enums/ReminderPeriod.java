@@ -3,7 +3,7 @@ package ru.verpul.enums;
 import ru.verpul.exception.NotFoundException;
 
 public enum ReminderPeriod {
-    MINUTE("Минута"), HOUR("Час"), DAY("День"), WEEK("Неделя"), MONTH("Месяц"), YEAR("Год");
+    DAY("День"), WEEK("Неделя"), MONTH("Месяц"), YEAR("Год");
 
     private final String title;
 

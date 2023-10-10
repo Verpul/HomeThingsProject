@@ -5,8 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import ru.verpul.DTO.ReminderDTO;
-import ru.verpul.exception.NotFoundException;
-import ru.verpul.model.ReminderCategory;
 import ru.verpul.service.ReminderService;
 
 import javax.validation.Valid;
@@ -20,8 +18,9 @@ public class ReminderController {
     private final ReminderService reminderService;
 
     @GetMapping
-    public List<ReminderDTO> getRemindersList(@RequestParam(name = "categoryId", required = false) Long categoryId) {
-        return reminderService.getRemindersList(categoryId);
+    public List<ReminderDTO> getRemindersList(@RequestParam(name = "categoryId", required = false) Long categoryId,
+                                              @RequestParam(name = "showCompleted") boolean showCompleted) {
+        return reminderService.getRemindersList(categoryId, showCompleted);
     }
 
     @PostMapping
@@ -40,5 +39,11 @@ public class ReminderController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteReminder(@PathVariable Long id) {
         reminderService.deleteReminder(id);
+    }
+
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void changeCompleteStatus(@PathVariable Long id) {
+        reminderService.changeCompleteStatus(id);
     }
 }

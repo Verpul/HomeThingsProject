@@ -12,7 +12,6 @@ import ru.verpul.repository.ReminderRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,7 +47,7 @@ public class ReminderCategoryService {
 
     @Transactional
     public int deleteReminderCategory(Long id) {
-        List<Reminder> foundReminders = reminderRepository.findByCategory(id);
+        List<Reminder> foundReminders = reminderRepository.findAllByCategory(id);
         if (foundReminders.size() > 0) return foundReminders.size();
 
         reminderCategoryRepository.deleteById(id);

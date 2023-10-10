@@ -44,5 +44,7 @@ public class ReminderDTO {
 
     private Integer periodicity;
 
-    private String declensionedPeriod;
+    private String declensionPeriod;
+
+    private Boolean completed;
 }

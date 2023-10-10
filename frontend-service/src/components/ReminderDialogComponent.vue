@@ -17,17 +17,20 @@
             </v-card-subtitle>
           </v-card>
           <v-card-text class="pa-0 mb-2">
-            <v-btn icon color="primary">
-              <v-icon>
-                mdi-check
+            <v-btn icon @click="reminderData.completed = !reminderData.completed">
+              <v-icon color="primary" v-if="!reminderData.completed">
+                mdi-circle-outline
               </v-icon>
+              <v-icon v-else>mdi-check-circle-outline</v-icon>
             </v-btn>
             <span>Основной</span>
           </v-card-text>
           <v-card-actions>
             <v-text-field dense v-model="reminderData.title"
                           :error-messages="reminderErrors.title"
-                          class="custom-text-field-font-size">
+                          class="custom-text-field-font-size"
+                          :disabled="reminderData.completed"
+            >
               <template v-slot:label>
                     <span class="custom-text-field-font-size">
                       Название напоминания
@@ -53,6 +56,7 @@
                     v-on="on"
                     dense
                     class="custom-text-field-font-size"
+                    :disabled="reminderData.completed"
                 >
                   <template v-slot:label>
                     <span class="custom-text-field-font-size">
@@ -95,6 +99,7 @@
                             v-on="on"
                             dense
                             class="custom-text-field-font-size"
+                            :disabled="reminderData.completed"
                         >
                           <template v-slot:label>
                             <span class="custom-text-field-font-size">
@@ -135,6 +140,7 @@
                             v-on="on"
                             dense
                             class="custom-text-field-font-size"
+                            :disabled="reminderData.completed"
                         >
                           <template v-slot:label>
                             <span class="custom-text-field-font-size">
@@ -170,6 +176,7 @@
                               class="custom-text-field-font-size"
                               clearable
                               dense
+                              :disabled="reminderData.completed"
                     >
                       <template v-slot:label>
                             <span class="custom-text-field-font-size">
@@ -184,7 +191,7 @@
                 <v-expand-transition>
                   <div v-if="reminderData.periodic">
                     <v-text-field type="number" dense v-model="reminderData.periodicity"
-                                  class="custom-text-field-font-size">
+                                  class="custom-text-field-font-size" :disabled="reminderData.completed">
                       <template v-slot:label>
                     <span class="custom-text-field-font-size">
                       Периодичность
@@ -237,7 +244,7 @@
                     class="custom-text-field-font-size"
                     clearable
                     dense
-                    :disabled="reminderData.parentId !== null"
+                    :disabled="reminderData.parentId !== null || reminderData.completed"
           >
             <template v-slot:label>
                             <span class="custom-text-field-font-size">
@@ -245,14 +252,14 @@
                             </span>
             </template>
           </v-select>
-          <v-checkbox v-model="visibility.remindCheckbox" dense>
+          <v-checkbox v-model="visibility.remindCheckbox" dense :disabled="reminderData.completed">
             <template v-slot:label>
               <span class="text-body-2">
                 Оповещение
               </span>
             </template>
           </v-checkbox>
-          <v-checkbox v-model="reminderData.periodic" dense class="mt-n4">
+          <v-checkbox v-model="reminderData.periodic" dense class="mt-n4" :disabled="reminderData.completed">
             <template v-slot:label>
               <span class="text-body-2">
                 Периодическая
@@ -298,9 +305,10 @@ export default {
       parentId: null,
       period: null,
       periodicity: null,
-      periodic: false
+      periodic: false,
+      completed: false
     },
-    periods: ['Минута', 'Час', 'День', 'Неделя', 'Месяц', 'Год']
+    periods: ['День', 'Неделя', 'Месяц', 'Год']
   }),
   methods: {
     async saveReminder() {
@@ -319,7 +327,8 @@ export default {
         parentId: this.reminderData.parentId,
         periodic: this.reminderData.periodic,
         period: this.reminderData.period,
-        periodicity: this.reminderData.periodicity
+        periodicity: this.reminderData.periodicity,
+        completed: this.reminderData.completed
       })
 
       if (this.reminderErrors.length === 0) {
@@ -345,6 +354,7 @@ export default {
       this.reminderData.periodic = false;
       this.reminderData.period = null;
       this.reminderData.periodicity = null;
+      this.reminderData.completed = false;
     },
     closeReminderDialog() {
       this.clearFields();
@@ -370,6 +380,7 @@ export default {
         this.reminderData.periodic = this.selectedReminder.periodic;
         this.reminderData.period = this.selectedReminder.period;
         this.reminderData.periodicity = this.selectedReminder.periodicity;
+        this.reminderData.completed = this.selectedReminder.completed;
 
         if (this.selectedReminder.parentId !== null) {
           this.setParentIdTitle(this.selectedReminder.parentId);

@@ -7,8 +7,6 @@ import ru.verpul.enums.ReminderPeriod;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -34,10 +32,6 @@ public class Reminder extends BaseEntity {
     @ManyToOne
     private Reminder parent;
 
-    @JoinColumn(name = "parent_id")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Reminder> children = new ArrayList<>();
-
     @Column(name = "nesting_depth")
     private Integer nestingDepth;
 
@@ -55,11 +49,6 @@ public class Reminder extends BaseEntity {
     @Column(name = "periodicity")
     private Integer periodicity;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "parent_entity_id")
-//    private ParentEntity parentEntity;
-//
-//    @Column(name = "parent_entity_id", insertable = false, updatable = false)
-//    private Long parentId;
-
+    @Column(name = "completed", nullable = false)
+    private Boolean completed;
 }

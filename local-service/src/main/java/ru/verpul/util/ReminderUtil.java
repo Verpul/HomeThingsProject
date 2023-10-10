@@ -1,7 +1,10 @@
 package ru.verpul.util;
 
 import ru.verpul.enums.ReminderPeriod;
+import ru.verpul.model.Reminder;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -10,8 +13,6 @@ public class ReminderUtil {
 
     static {
         declensions = Map.of(
-                ReminderPeriod.MINUTE, List.of("минута", "минуты", "минут"),
-                ReminderPeriod.HOUR, List.of("час", "часа", "часов"),
                 ReminderPeriod.DAY, List.of("день", "дня", "дней"),
                 ReminderPeriod.WEEK, List.of("неделя", "недели", "недель"),
                 ReminderPeriod.MONTH, List.of("месяц", "месяца", "месяцев"),
@@ -43,5 +44,34 @@ public class ReminderUtil {
         }
 
         return periodicity +  " " + result;
+    }
+
+    public static void setNextExpireAndRemindDate(Reminder reminder) {
+        LocalDate dateOfRemind = reminder.getRemindDate();
+        LocalDate dateOfExpire = reminder.getExpireDate();
+        ReminderPeriod reminderPeriod = reminder.getPeriod();
+        int periodicity = reminder.getPeriodicity();
+        ChronoUnit chronoUnit;
+
+        switch (reminderPeriod) {
+            case DAY:
+                chronoUnit = ChronoUnit.DAYS;
+                break;
+            case WEEK:
+                chronoUnit = ChronoUnit.WEEKS;
+                break;
+            case MONTH:
+                chronoUnit = ChronoUnit.MONTHS;
+                break;
+            default:
+                chronoUnit = ChronoUnit.YEARS;
+        }
+
+        reminder.setExpireDate(dateOfExpire.plus(periodicity, chronoUnit));
+
+        if (dateOfRemind != null) {
+            long daysBetween = ChronoUnit.DAYS.between(dateOfRemind, dateOfExpire);
+            reminder.setRemindDate(reminder.getExpireDate().minusDays(daysBetween));
+        }
     }
 }

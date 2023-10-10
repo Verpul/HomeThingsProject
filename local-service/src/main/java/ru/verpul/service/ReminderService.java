@@ -13,9 +13,13 @@ import ru.verpul.repository.ReminderCategoryRepository;
 import ru.verpul.repository.ReminderRepository;
 import ru.verpul.util.ReminderUtil;
 
-import javax.swing.text.html.parser.Entity;
-import java.util.*;
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -24,13 +28,17 @@ public class ReminderService {
     private final ReminderMapper reminderMapper;
     private final ReminderCategoryRepository reminderCategoryRepository;
 
-    public List<ReminderDTO> getRemindersList(Long categoryId) {
+    public List<ReminderDTO> getRemindersList(Long categoryId, boolean showCompleted) {
         List<Reminder> reminders;
 
         if (categoryId == null) {
-            reminders = reminderRepository.findAllOrderByParentIdAndExpireDate();
+            reminders = showCompleted ?
+                    reminderRepository.findAllOrderByParentIdAndExpireDate() :
+                    reminderRepository.findUncompletedOrderByParentIdAndExpireDate();
         } else {
-            reminders = reminderRepository.findByCategory(categoryId);
+            reminders = showCompleted ?
+                    reminderRepository.findAllByCategory(categoryId) :
+                    reminderRepository.findUncompletedByCategory(categoryId);
         }
 
         List<ReminderDTO> reminderDTOList = reminders.stream()
@@ -59,17 +67,58 @@ public class ReminderService {
                     reminder.setRemindTime(reminderDTO.getRemindTime());
                     reminder.setComment(reminderDTO.getComment());
                     reminder.setPeriodic(reminderDTO.getPeriodic());
-                    reminder.setPeriod(ReminderPeriod.findByTitle(reminderDTO.getPeriod()));
                     reminder.setPeriodicity(reminderDTO.getPeriodicity());
-
+                    reminder.setCompleted(reminderDTO.getCompleted());
                     setReminderCategoryAndNestedDepthAndParent(reminder, reminderDTO);
 
+                    if (reminderDTO.getPeriodic()) {
+                        reminder.setPeriod(ReminderPeriod.findByTitle(reminderDTO.getPeriod()));
+                    }
+
                     return reminderRepository.save(reminder);
-                }).orElseThrow(() ->  new NotFoundException("Напоминание с id = " + id + " не найдено"));
+                }).orElseThrow(() -> new NotFoundException("Напоминание с id = " + id + " не найдено"));
     }
 
+    @Transactional
     public void deleteReminder(Long id) {
-        reminderRepository.deleteById(id);
+        reminderRepository.deleteAll(reminderRepository.findReminderWithAllSiblings(id));
+    }
+
+    @Transactional
+    public void changeCompleteStatus(Long id) {
+        Reminder selectedReminder = reminderRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Напоминание с id = " + id + " не найдено"));
+        boolean completed = selectedReminder.getCompleted();
+
+        List<Reminder> remindersToChange = completed ?
+                reminderRepository.findReminderWithParents(id) :
+                reminderRepository.findReminderWithAllSiblings(id);
+
+        List<Reminder> remindersToSave = remindersToChange.stream()
+                .peek(reminder -> reminder.setCompleted(!completed)).collect(Collectors.toList());
+
+        reminderRepository.saveAll(remindersToSave);
+
+        if (selectedReminder.getPeriodic() && !completed) {
+            Reminder newReminder = new Reminder();
+
+            newReminder.setTitle(selectedReminder.getTitle());
+            newReminder.setExpireDate(selectedReminder.getExpireDate());
+            newReminder.setRemindDate(selectedReminder.getRemindDate());
+            newReminder.setRemindTime(selectedReminder.getRemindTime());
+            newReminder.setPeriodicity(selectedReminder.getPeriodicity());
+            newReminder.setPeriodic(selectedReminder.getPeriodic());
+            newReminder.setPeriod(selectedReminder.getPeriod());
+            newReminder.setComment(selectedReminder.getComment());
+            newReminder.setParent(selectedReminder.getParent());
+            newReminder.setNestingDepth(selectedReminder.getNestingDepth());
+            newReminder.setCategory(selectedReminder.getCategory());
+            newReminder.setCompleted(false);
+
+            ReminderUtil.setNextExpireAndRemindDate(newReminder);
+
+            reminderRepository.save(newReminder);
+        }
     }
 
     private void setReminderCategoryAndNestedDepthAndParent(Reminder reminderToSave, ReminderDTO reminderSource) {

@@ -12,7 +12,7 @@ public interface ReminderMapper {
     @Mapping(source = "category.id", target = "categoryId")
     @Mapping(source = "parent.id", target = "parentId")
     @Mapping(target = "period", expression = "java(reminder.getPeriod() != null ? reminder.getPeriod().toString() : null)")
-    @Mapping(target = "declensionedPeriod", expression = "java(reminder.getPeriodic() ? " +
+    @Mapping(target = "declensionPeriod", expression = "java(reminder.getPeriodic() ? " +
             "ReminderUtil.getDeclensionOfPeriod(reminder.getPeriod(), reminder.getPeriodicity()) : null)")
     ReminderDTO reminderToReminderDTO(Reminder reminder);
 

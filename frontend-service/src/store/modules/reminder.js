@@ -6,6 +6,7 @@ const state = {
   reminders: [],
   reminderErrors: [],
   categoryId: null,
+  showCompeted: false
 }
 
 const mutations = {
@@ -18,13 +19,17 @@ const mutations = {
   setCategoryId(state, categoryId) {
     state.categoryId = categoryId;
   },
+  changeShowCompleted(state) {
+    state.showCompeted = !state.showCompeted;
+  }
 }
 
 const actions = {
   getAllReminders({commit, state}) {
     axios.get(REMINDER_API_URL, {
       params: {
-        categoryId: state.categoryId
+        categoryId: state.categoryId,
+        showCompleted: state.showCompeted
       }
     }).then((response) => {
       commit('setReminders', {data: response.data})
@@ -48,6 +53,11 @@ const actions = {
     axios.delete(`${REMINDER_API_URL}/${id}`).then(() => {
       dispatch('getAllReminders')
     })
+  },
+  changeCompletedStatus({dispatch}, id) {
+    axios.patch(`${REMINDER_API_URL}/${id}`).then(() => {
+      dispatch('getAllReminders')
+    })
   }
 }
 
@@ -61,6 +71,9 @@ const getters = {
   currentCategoryId(state) {
     return state.categoryId;
   },
+  showCompleted(state) {
+    return state.showCompeted;
+  }
 }
 
 export default {
