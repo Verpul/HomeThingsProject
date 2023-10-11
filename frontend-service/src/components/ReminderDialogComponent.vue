@@ -17,13 +17,11 @@
             </v-card-subtitle>
           </v-card>
           <v-card-text class="pa-0 mb-2">
-            <v-btn icon @click="reminderData.completed = !reminderData.completed">
-              <v-icon color="primary" v-if="!reminderData.completed">
-                mdi-circle-outline
-              </v-icon>
-              <v-icon v-else>mdi-check-circle-outline</v-icon>
-            </v-btn>
-            <span>Основной</span>
+            <v-icon v-if="!reminderData.completed">
+              mdi-circle-outline
+            </v-icon>
+            <v-icon v-else>mdi-check-circle-outline</v-icon>
+            <span class="ms-2">Основной</span>
           </v-card-text>
           <v-card-actions>
             <v-text-field dense v-model="reminderData.title"
@@ -275,7 +273,8 @@
               </span>
             </template>
           </v-checkbox>
-          <v-checkbox v-model="visibility.commentCheckbox" dense class="mt-n4" :class="reminderErrors.periodic ? 'pt-4' : 'pt-1'">
+          <v-checkbox v-model="visibility.commentCheckbox" dense class="mt-n4"
+                      :class="reminderErrors.periodic ? 'pt-4' : 'pt-1'">
             <template v-slot:label>
               <span class="text-body-2">
                 Комментарий

@@ -3,6 +3,7 @@ package ru.verpul.DTO.validator;
 import lombok.RequiredArgsConstructor;
 import ru.verpul.DTO.WeightRecordDTO;
 import ru.verpul.service.WeightRecordService;
+import ru.verpul.util.CommonUtil;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -25,13 +26,8 @@ public class UniqueRecordDateValidator implements ConstraintValidator<UniqueReco
 
         boolean valid = foundId == null || Objects.equals(id, foundId);
 
-        if (!valid) {
-            constraintValidatorContext.disableDefaultConstraintViolation();
-            constraintValidatorContext
-                    .buildConstraintViolationWithTemplate(constraintValidatorContext.getDefaultConstraintMessageTemplate())
-                    .addPropertyNode("weightRecordDate")
-                    .addConstraintViolation();
-        }
+
+        if (!valid) CommonUtil.attachValidationMessageToField(constraintValidatorContext, "weightRecordDate");
 
         return valid;
     }

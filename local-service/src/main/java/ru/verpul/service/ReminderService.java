@@ -58,19 +58,22 @@ public class ReminderService {
     public void updateReminder(Long id, ReminderDTO reminderDTO) {
         reminderRepository.findById(id)
                 .map(reminder -> {
-                    reminder.setTitle(reminderDTO.getTitle());
-                    reminder.setExpireDate(reminderDTO.getExpireDate());
-                    setRemindDate(reminderDTO);
-                    reminder.setRemindDate(reminderDTO.getRemindDate());
-                    reminder.setRemindTime(reminderDTO.getRemindTime());
                     reminder.setComment(reminderDTO.getComment());
-                    reminder.setPeriodic(reminderDTO.getPeriodic());
-                    reminder.setPeriodicity(reminderDTO.getPeriodicity());
-                    reminder.setCompleted(reminderDTO.getCompleted());
-                    setReminderCategoryAndNestedDepthAndParent(reminder, reminderDTO);
 
-                    if (reminderDTO.getPeriodic()) {
-                        reminder.setPeriod(ReminderPeriod.findByTitle(reminderDTO.getPeriod()));
+                    if (!reminder.getCompleted()) {
+                        reminder.setTitle(reminderDTO.getTitle());
+                        reminder.setExpireDate(reminderDTO.getExpireDate());
+                        setRemindDate(reminderDTO);
+                        reminder.setRemindDate(reminderDTO.getRemindDate());
+                        reminder.setRemindTime(reminderDTO.getRemindTime());
+                        reminder.setPeriodic(reminderDTO.getPeriodic());
+                        reminder.setPeriodicity(reminderDTO.getPeriodicity());
+                        reminder.setCompleted(reminderDTO.getCompleted());
+                        setReminderCategoryAndNestedDepthAndParent(reminder, reminderDTO);
+
+                        if (reminderDTO.getPeriodic()) {
+                            reminder.setPeriod(ReminderPeriod.findByTitle(reminderDTO.getPeriod()));
+                        }
                     }
 
                     return reminderRepository.save(reminder);
@@ -134,6 +137,16 @@ public class ReminderService {
 
             reminderToSave.setCategory(categoryToSave);
             reminderToSave.setNestingDepth(null);
+
+            List<Reminder> remindersToChange = reminderRepository.findReminderWithAllSiblings(reminderSource.getId());
+
+            if (remindersToChange.size() != 0) {
+                List<Reminder> remindersToSave = remindersToChange.stream()
+                        .filter(reminder -> !reminder.getId().equals(reminderSource.getId()))
+                        .peek(reminder -> reminder.setCategory(categoryToSave)).collect(Collectors.toList());
+
+                reminderRepository.saveAll(remindersToSave);
+            }
         }
     }
 

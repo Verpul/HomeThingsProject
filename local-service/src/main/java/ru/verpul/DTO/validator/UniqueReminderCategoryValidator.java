@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import ru.verpul.DTO.ReminderCategoryDTO;
 import ru.verpul.model.ReminderCategory;
 import ru.verpul.service.ReminderCategoryService;
+import ru.verpul.util.CommonUtil;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -22,13 +23,7 @@ public class UniqueReminderCategoryValidator implements ConstraintValidator<Uniq
 
         boolean valid = foundReminderCategory == null || foundReminderCategory.getId().equals(category.getId());
 
-        if (!valid) {
-            context.disableDefaultConstraintViolation();
-            context
-                    .buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
-                    .addPropertyNode("title")
-                    .addConstraintViolation();
-        }
+        if (!valid) CommonUtil.attachValidationMessageToField(context, "title");
 
         return valid;
     }

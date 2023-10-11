@@ -1,6 +1,7 @@
 package ru.verpul.DTO.validator;
 
 import ru.verpul.DTO.ReminderDTO;
+import ru.verpul.util.CommonUtil;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -23,13 +24,8 @@ public class RemindTimeFutureValidator implements ConstraintValidator<RemindTime
         boolean valid = (reminderLocalDate != null && reminderLocalDate.isBefore(LocalDate.now())) ||
                 reminderTime.isAfter(LocalTime.now());
 
-        if (!valid) {
-            context.disableDefaultConstraintViolation();
-            context
-                    .buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
-                    .addPropertyNode("remindTime")
-                    .addConstraintViolation();
-        }
+        if (!valid) CommonUtil.attachValidationMessageToField(context, "remindTime");
+
         return valid;
     }
 }

@@ -1,6 +1,7 @@
 package ru.verpul.DTO.validator;
 
 import ru.verpul.DTO.ReminderDTO;
+import ru.verpul.util.CommonUtil;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -16,13 +17,7 @@ public class PeriodicReminderValidator implements ConstraintValidator<PeriodicRe
 
         boolean valid = reminder.getPeriod() != null && reminder.getPeriodicity() != null && reminder.getExpireDate() != null;
 
-        if (!valid) {
-            context.disableDefaultConstraintViolation();
-            context
-                    .buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
-                    .addPropertyNode("periodic")
-                    .addConstraintViolation();
-        }
+        if (!valid) CommonUtil.attachValidationMessageToField(context, "periodic");
 
         return valid;
     }
