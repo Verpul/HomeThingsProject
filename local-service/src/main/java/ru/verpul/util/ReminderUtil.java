@@ -1,10 +1,13 @@
 package ru.verpul.util;
 
+import ru.verpul.DTO.ReminderDTO;
 import ru.verpul.enums.ReminderPeriod;
 import ru.verpul.model.Reminder;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -72,6 +75,31 @@ public class ReminderUtil {
         if (dateOfRemind != null) {
             long daysBetween = ChronoUnit.DAYS.between(dateOfRemind, dateOfExpire);
             reminder.setRemindDate(reminder.getExpireDate().minusDays(daysBetween));
+        }
+    }
+
+    public static List<ReminderDTO> treeSort(List<ReminderDTO> reminderDTOList) {
+        Map<Long, List<ReminderDTO>> remindersMap = new HashMap<>();
+
+        for (ReminderDTO reminder : reminderDTOList) {
+            if (!remindersMap.containsKey(reminder.getParentId())) {
+                remindersMap.put(reminder.getParentId(), new ArrayList<>());
+            }
+            remindersMap.get(reminder.getParentId()).add(reminder);
+        }
+
+        List<ReminderDTO> sortedReminderDTOs = new ArrayList<>();
+        sortChildren(null, remindersMap, sortedReminderDTOs);
+
+        return sortedReminderDTOs;
+    }
+
+    private static void sortChildren(Long parentId, Map<Long, List<ReminderDTO>> remindersMap, List<ReminderDTO> sortedReminders) {
+        if (remindersMap.containsKey(parentId)) {
+            for (ReminderDTO reminder : remindersMap.get(parentId)) {
+                sortedReminders.add(reminder);
+                sortChildren(reminder.getId(), remindersMap, sortedReminders);
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-package ru.verpul;
+package ru.verpul.weight;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;

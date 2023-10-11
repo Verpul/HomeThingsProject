@@ -1,5 +1,6 @@
 package ru.verpul.repository;
 
+import liquibase.pro.packaged.Q;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.verpul.model.Reminder;
@@ -35,4 +36,7 @@ public interface ReminderRepository extends JpaRepository<Reminder, Long> {
             "JOIN reminders_tree rt ON r.id = rt.parent_id) " +
             "SELECT * FROM reminders_tree", nativeQuery = true)
     List<Reminder> findReminderWithParents(Long id);
+
+    @Query("SELECT r FROM Reminder r WHERE r.id = :parentId")
+    Reminder findParentReminderById(Long parentId);
 }

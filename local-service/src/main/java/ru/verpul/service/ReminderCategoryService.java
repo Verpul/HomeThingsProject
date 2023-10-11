@@ -53,4 +53,8 @@ public class ReminderCategoryService {
         reminderCategoryRepository.deleteById(id);
         return 0;
     }
+
+    public ReminderCategory findCategoryByTitle(String title) {
+        return reminderCategoryRepository.findCategoryByTitle(title);
+    }
 }

@@ -1,4 +1,4 @@
-package ru.verpul;
+package ru.verpul.weight;
 
 import ru.verpul.DTO.WeightRecordDTO;
 import ru.verpul.model.WeightRecord;

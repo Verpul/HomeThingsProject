@@ -13,13 +13,9 @@ import ru.verpul.repository.ReminderCategoryRepository;
 import ru.verpul.repository.ReminderRepository;
 import ru.verpul.util.ReminderUtil;
 
-import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +41,7 @@ public class ReminderService {
                 .map(reminderMapper::reminderToReminderDTO)
                 .collect(Collectors.toList());
 
-        return treeSort(reminderDTOList);
+        return ReminderUtil.treeSort(reminderDTOList);
     }
 
     @Transactional
@@ -53,6 +49,7 @@ public class ReminderService {
         Reminder reminderToSave = reminderMapper.reminderDTOToReminder(reminderDTO);
 
         setReminderCategoryAndNestedDepthAndParent(reminderToSave, reminderDTO);
+        setRemindDate(reminderDTO);
 
         reminderRepository.save(reminderToSave);
     }
@@ -63,6 +60,7 @@ public class ReminderService {
                 .map(reminder -> {
                     reminder.setTitle(reminderDTO.getTitle());
                     reminder.setExpireDate(reminderDTO.getExpireDate());
+                    setRemindDate(reminderDTO);
                     reminder.setRemindDate(reminderDTO.getRemindDate());
                     reminder.setRemindTime(reminderDTO.getRemindTime());
                     reminder.setComment(reminderDTO.getComment());
@@ -139,28 +137,12 @@ public class ReminderService {
         }
     }
 
-    private List<ReminderDTO> treeSort(List<ReminderDTO> reminderDTOList) {
-        Map<Long, List<ReminderDTO>> remindersMap = new HashMap<>();
-
-        for (ReminderDTO reminder : reminderDTOList) {
-            if (!remindersMap.containsKey(reminder.getParentId())) {
-                remindersMap.put(reminder.getParentId(), new ArrayList<>());
-            }
-            remindersMap.get(reminder.getParentId()).add(reminder);
-        }
-
-        List<ReminderDTO> sortedReminderDTOs = new ArrayList<>();
-        sortChildren(null, remindersMap, sortedReminderDTOs);
-
-        return sortedReminderDTOs;
+    public Reminder getParentReminder(Long parentId) {
+        return reminderRepository.findParentReminderById(parentId);
     }
 
-    private void sortChildren(Long parentId, Map<Long, List<ReminderDTO>> remindersMap, List<ReminderDTO> sortedReminders) {
-        if (remindersMap.containsKey(parentId)) {
-            for (ReminderDTO reminder : remindersMap.get(parentId)) {
-                sortedReminders.add(reminder);
-                sortChildren(reminder.getId(), remindersMap, sortedReminders);
-            }
-        }
+    private void setRemindDate(ReminderDTO reminderDTO) {
+        reminderDTO.setRemindDate(reminderDTO.getRemindTime() != null && reminderDTO.getRemindDate() == null ?
+                LocalDate.now() : reminderDTO.getRemindDate());
     }
 }

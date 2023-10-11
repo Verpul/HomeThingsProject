@@ -57,6 +57,8 @@
                     dense
                     class="custom-text-field-font-size"
                     :disabled="reminderData.completed"
+                    :error-messages="reminderErrors.expireDate"
+                    clearable
                 >
                   <template v-slot:label>
                     <span class="custom-text-field-font-size">
@@ -100,6 +102,8 @@
                             dense
                             class="custom-text-field-font-size"
                             :disabled="reminderData.completed"
+                            :error-messages="reminderErrors.remindDate"
+                            clearable
                         >
                           <template v-slot:label>
                             <span class="custom-text-field-font-size">
@@ -141,6 +145,8 @@
                             dense
                             class="custom-text-field-font-size"
                             :disabled="reminderData.completed"
+                            :error-messages="reminderErrors.remindTime"
+                            clearable
                         >
                           <template v-slot:label>
                             <span class="custom-text-field-font-size">
@@ -191,7 +197,8 @@
                 <v-expand-transition>
                   <div v-if="reminderData.periodic">
                     <v-text-field type="number" dense v-model="reminderData.periodicity"
-                                  class="custom-text-field-font-size" :disabled="reminderData.completed">
+                                  class="custom-text-field-font-size" :disabled="reminderData.completed"
+                                  :error-messages="reminderErrors.periodicity">
                       <template v-slot:label>
                     <span class="custom-text-field-font-size">
                       Периодичность
@@ -215,6 +222,7 @@
                                 rows="3"
                                 v-model="reminderData.comment"
                                 class="custom-text-field-font-size"
+                                :error-messages="reminderErrors.comment"
                     >
                       <template v-slot:label>
                             <span class="custom-text-field-font-size">
@@ -259,14 +267,15 @@
               </span>
             </template>
           </v-checkbox>
-          <v-checkbox v-model="reminderData.periodic" dense class="mt-n4" :disabled="reminderData.completed">
+          <v-checkbox v-model="reminderData.periodic" dense class="mt-n4" :disabled="reminderData.completed"
+                      :error-messages="reminderErrors.periodic">
             <template v-slot:label>
               <span class="text-body-2">
                 Периодическая
               </span>
             </template>
           </v-checkbox>
-          <v-checkbox v-model="visibility.commentCheckbox" dense class="mt-n4">
+          <v-checkbox v-model="visibility.commentCheckbox" dense class="mt-n4" :class="reminderErrors.periodic ? 'pt-4' : 'pt-1'">
             <template v-slot:label>
               <span class="text-body-2">
                 Комментарий
