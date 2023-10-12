@@ -1,5 +1,6 @@
 package ru.verpul.DTO;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.verpul.DTO.validator.UniqueReminderCategory;
@@ -9,6 +10,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @UniqueReminderCategory(message = "Категория должна быть уникальной")
 public class ReminderCategoryDTO {
     private Long id;

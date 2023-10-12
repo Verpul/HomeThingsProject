@@ -47,9 +47,9 @@ public class ReminderCategoryService {
         List<Reminder> foundReminders = reminderRepository.findAllByCategory(id);
 
         if (foundReminders.size() > 0) {
-            throw new AssociationFoundException("У этой категории " + foundReminders.size() + " напоминаний, удаление невозможно");
+            throw new AssociationFoundException("У этой категории существуют напоминания: " + foundReminders.size() + " шт., удаление невозможно");
         } else {
-            reminderCategoryRepository.deleteById(id);
+            reminderCategoryRepository.findById(id).ifPresent(reminderCategoryRepository::delete);
         }
     }
 
