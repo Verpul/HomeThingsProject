@@ -1,0 +1,48 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet author="verpul" id="26.09.23-reminderDatesTable">
+        <createTable tableName="reminder_dates">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="reminder_dates_pkey"/>
+            </column>
+            <column name="reminder_date" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reminder_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="verpul" id="26.09.23-remindersTable">
+        <createTable tableName="reminders">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="reminders_pkey"/>
+            </column>
+            <column name="expire_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="period" type="VARCHAR(255)"/>
+            <column name="period_length" type="INTEGER"/>
+            <column name="price" type="VARCHAR(10)"/>
+            <column name="repeatable" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="verpul" id="26.09.23-reminderDatesTableForeignKeyConstraintReminderId">
+        <addForeignKeyConstraint baseColumnNames="reminder_id" baseTableName="reminder_dates"
+                                 constraintName="foreign_key_constraint_reminder_id_for_reminder_dates" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="reminders" validate="true"/>
+    </changeSet>
+
+</databaseChangeLog>
