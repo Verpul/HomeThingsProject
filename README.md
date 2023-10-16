@@ -3,17 +3,21 @@
 ## Frontend Service (Vue + Vuetify)
 - Порт 8080
 
-### Запуск (требуется установка Node.js)
+#### Запуск (требуется установка Node.js)
 cmd -> cd frontend-service
 
-### Скачивание пакетов
+#### Скачивание пакетов
 npm install
 
-### Dev-запуск
+#### Dev-запуск
 npm run serve
 
-## Weight Service (Сервис учета веса)
+## Local Service
 - Порт 8081
+
+#### Включает в себя
+- Weight module
+- Reminders module
 
 #### Enviroment variables:
 - POSTGRES_USER
