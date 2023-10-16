@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Table(name = "reminder_category")
 public class ReminderCategory extends BaseEntity{
 
-    @Column(name = "title", length = 100, unique = true)
+    @Column(name = "title", length = 100, unique = true, nullable = false)
     private String title;
 
 }
