@@ -1,23 +1,27 @@
 package ru.verpul.DTO;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.verpul.DTO.validator.PeriodicReminder;
 import ru.verpul.DTO.validator.RemindTimeFuture;
-import ru.verpul.DTO.validator.SubReminderPossibility;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
-@SubReminderPossibility(message = "Невозможно создать поднапоминание у данного напоминания")
 @PeriodicReminder(message = "Период, периодичность и дата события должны быть заполнены")
 @RemindTimeFuture(message = "Время напоминания не может быть меньше текущего")
+@NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class ReminderDTO {
     private Long id;
 
-    @NotBlank(message = "Поле название должно быть заполнено")
+    @NotBlank(message = "Название должно быть заполнено")
     @Size(max = 200, message = "Название не может превышать 200 символов")
     private String title;
 
@@ -37,7 +41,6 @@ public class ReminderDTO {
 
     private Long parentId;
 
-    @PositiveOrZero(message = "Глубина наследования не может быть меньше 0")
     private Integer nestingDepth;
 
     private Long categoryId;
@@ -52,9 +55,4 @@ public class ReminderDTO {
     private String declensionPeriod;
 
     private Boolean completed;
-
-    @AssertFalse(message = "Неверный parentId")
-    public boolean isParentIdSetWithNestedDepth() {
-        return nestingDepth != null && parentId == null;
-    }
 }

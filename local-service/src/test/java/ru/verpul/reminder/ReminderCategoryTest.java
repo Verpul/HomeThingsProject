@@ -166,7 +166,7 @@ public class ReminderCategoryTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof AssociationFoundException))
-                .andExpect(jsonPath("$", is("У этой категории существуют напоминания: " + 1 + " шт., удаление невозможно")));
+                .andExpect(jsonPath("$", is("У этой категории существуют напоминания: " + 2 + " шт., удаление невозможно")));
     }
 
     @Test

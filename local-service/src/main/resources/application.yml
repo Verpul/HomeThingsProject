@@ -19,8 +19,4 @@ spring:
     change-log: "classpath:db/changelog/changelog-master.xml"
     enabled: true
 
-reminder:
-  max-nesting-depth: 5
-
-
 

@@ -15,6 +15,7 @@ import ru.verpul.util.ReminderUtil;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,10 +47,11 @@ public class ReminderService {
 
     @Transactional
     public void createReminder(ReminderDTO reminderDTO) {
-        Reminder reminderToSave = reminderMapper.reminderDTOToReminder(reminderDTO);
-
-        setReminderCategoryAndNestedDepthAndParent(reminderToSave, reminderDTO);
         setRemindDate(reminderDTO);
+
+        Reminder reminderToSave = reminderMapper.reminderDTOToReminder(reminderDTO);
+        setReminderCategoryAndNestedDepthAndParent(reminderToSave, reminderDTO);
+
 
         reminderRepository.save(reminderToSave);
     }
@@ -68,7 +70,6 @@ public class ReminderService {
                         reminder.setRemindTime(reminderDTO.getRemindTime());
                         reminder.setPeriodic(reminderDTO.getPeriodic());
                         reminder.setPeriodicity(reminderDTO.getPeriodicity());
-                        reminder.setCompleted(reminderDTO.getCompleted());
                         setReminderCategoryAndNestedDepthAndParent(reminder, reminderDTO);
 
                         if (reminderDTO.getPeriodic()) {
@@ -123,9 +124,8 @@ public class ReminderService {
     }
 
     private void setReminderCategoryAndNestedDepthAndParent(Reminder reminderToSave, ReminderDTO reminderSource) {
-        if (reminderSource.getParentId() != null) {
-            Reminder parentReminder = reminderRepository.findById(reminderSource.getParentId())
-                    .orElseThrow(() -> new NotFoundException("Напоминание-родитель с такими данными не найдено!"));
+        if (reminderSource.getParentId() != null && reminderRepository.findById(reminderSource.getParentId()).isPresent()) {
+            Reminder parentReminder = reminderRepository.findById(reminderSource.getParentId()).get();
 
             int nestingDepth = parentReminder.getNestingDepth() == null ? 1 : parentReminder.getNestingDepth() + 1;
             reminderToSave.setNestingDepth(nestingDepth);
@@ -135,23 +135,21 @@ public class ReminderService {
             ReminderCategory categoryToSave = reminderSource.getCategoryId() == null ?
                     null : reminderCategoryRepository.findById(reminderSource.getCategoryId()).orElse(null);
 
+            if (reminderToSave.getId() != null && !Objects.equals(categoryToSave, reminderToSave.getCategory())) {
+                List<Reminder> remindersToChange = reminderRepository.findReminderWithAllSiblings(reminderSource.getId());
+
+                if (remindersToChange.size() != 0) {
+                    List<Reminder> remindersToSave = remindersToChange.stream()
+                            .filter(reminder -> !reminder.getId().equals(reminderSource.getId()))
+                            .peek(reminder -> reminder.setCategory(categoryToSave)).collect(Collectors.toList());
+
+                    reminderRepository.saveAll(remindersToSave);
+                }
+            }
+
             reminderToSave.setCategory(categoryToSave);
             reminderToSave.setNestingDepth(null);
-
-            List<Reminder> remindersToChange = reminderRepository.findReminderWithAllSiblings(reminderSource.getId());
-
-            if (remindersToChange.size() != 0) {
-                List<Reminder> remindersToSave = remindersToChange.stream()
-                        .filter(reminder -> !reminder.getId().equals(reminderSource.getId()))
-                        .peek(reminder -> reminder.setCategory(categoryToSave)).collect(Collectors.toList());
-
-                reminderRepository.saveAll(remindersToSave);
-            }
         }
-    }
-
-    public Reminder getParentReminder(Long parentId) {
-        return reminderRepository.findParentReminderById(parentId);
     }
 
     private void setRemindDate(ReminderDTO reminderDTO) {

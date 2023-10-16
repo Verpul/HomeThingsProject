@@ -17,5 +17,8 @@ public interface ReminderMapper {
     ReminderDTO reminderToReminderDTO(Reminder reminder);
 
     @Mapping(target = "period", expression = "java(reminderDTO.getPeriod() != null ? ReminderPeriod.findByTitle(reminderDTO.getPeriod()) : null)")
+    @Mapping(target = "completed", constant = "false")
+    @Mapping(target = "periodic", defaultValue = "false")
+    @Mapping(target = "nestingDepth", ignore = true)
     Reminder reminderDTOToReminder(ReminderDTO reminderDTO);
 }

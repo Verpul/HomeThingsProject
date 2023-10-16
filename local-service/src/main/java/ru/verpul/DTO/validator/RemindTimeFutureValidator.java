@@ -21,7 +21,7 @@ public class RemindTimeFutureValidator implements ConstraintValidator<RemindTime
 
         LocalDate reminderLocalDate = reminder.getRemindDate();
 
-        boolean valid = (reminderLocalDate != null && reminderLocalDate.isBefore(LocalDate.now())) ||
+        boolean valid = (reminderLocalDate != null && reminderLocalDate.isAfter(LocalDate.now())) ||
                 reminderTime.isAfter(LocalTime.now());
 
         if (!valid) CommonUtil.attachValidationMessageToField(context, "remindTime");

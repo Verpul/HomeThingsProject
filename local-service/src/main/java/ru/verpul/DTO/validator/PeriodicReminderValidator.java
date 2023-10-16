@@ -13,7 +13,7 @@ public class PeriodicReminderValidator implements ConstraintValidator<PeriodicRe
 
     @Override
     public boolean isValid(ReminderDTO reminder, ConstraintValidatorContext context) {
-        if (!reminder.getPeriodic()) return true;
+        if (reminder.getPeriodic() == null || !reminder.getPeriodic()) return true;
 
         boolean valid = reminder.getPeriod() != null && reminder.getPeriodicity() != null && reminder.getExpireDate() != null;
 

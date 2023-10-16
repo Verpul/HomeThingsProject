@@ -1,6 +1,5 @@
 package ru.verpul.repository;
 
-import liquibase.pro.packaged.Q;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.verpul.model.Reminder;

@@ -19,7 +19,7 @@ public class ReminderController {
 
     @GetMapping
     public List<ReminderDTO> getRemindersList(@RequestParam(name = "categoryId", required = false) Long categoryId,
-                                              @RequestParam(name = "showCompleted") boolean showCompleted) {
+                                              @RequestParam(name = "showCompleted", defaultValue = "false") boolean showCompleted) {
         return reminderService.getRemindersList(categoryId, showCompleted);
     }
 
