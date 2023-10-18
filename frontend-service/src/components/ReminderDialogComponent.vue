@@ -91,7 +91,7 @@
                 >
                   <template v-slot:activator="{ on, attrs }">
                     <v-expand-transition>
-                      <div v-if="visibility.remindCheckbox">
+                      <div v-show="visibility.remindCheckbox">
                         <v-text-field
                             v-model="reminderData.remindDateFormatted"
                             persistent-hint
@@ -134,7 +134,7 @@
                 >
                   <template v-slot:activator="{ on, attrs }">
                     <v-expand-transition>
-                      <div v-if="visibility.remindCheckbox">
+                      <div v-show="visibility.remindCheckbox">
                         <v-text-field
                             v-model="reminderData.remindTime"
                             readonly

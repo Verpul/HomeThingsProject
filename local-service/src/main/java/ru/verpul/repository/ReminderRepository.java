@@ -1,9 +1,13 @@
 package ru.verpul.repository;
 
+import liquibase.pro.packaged.Q;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import ru.verpul.DTO.ReminderDTO;
 import ru.verpul.model.Reminder;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface ReminderRepository extends JpaRepository<Reminder, Long> {
@@ -36,6 +40,16 @@ public interface ReminderRepository extends JpaRepository<Reminder, Long> {
             "SELECT * FROM reminders_tree", nativeQuery = true)
     List<Reminder> findReminderWithParents(Long id);
 
-    @Query("SELECT r FROM Reminder r WHERE r.id = :parentId")
-    Reminder findParentReminderById(Long parentId);
+    @Query(value = "SELECT * FROM reminders r " +
+            "WHERE r.remind_date <= NOW() " +
+            "AND (r.remind_time <= CAST(CURRENT_DATE || ' ' || CURRENT_TIME AS time) OR r.remind_time IS NULL) " +
+            "AND r.completed = false " +
+            "ORDER BY r.expire_date", nativeQuery = true)
+    List<Reminder> getReminderWithRemindDateAndTimeLessThanNow();
+
+    @Query(value = "SELECT * FROM reminders r " +
+            "WHERE r.remind_date = CURRENT_DATE " +
+            "AND r.remind_time IS NOT NULL " +
+            "AND r.completed = false", nativeQuery = true)
+    List<Reminder> getRemindersForTodayWithRemindTime();
 }
