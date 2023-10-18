@@ -46,4 +46,14 @@ public class ReminderController {
     public void changeCompleteStatus(@PathVariable Long id) {
         reminderService.changeCompleteStatus(id);
     }
+
+    @GetMapping("/todo")
+    public List<ReminderDTO> getRemindersWithProperRemindDate() {
+        return reminderService.getRemindersWithProperRemindDate();
+    }
+
+    @GetMapping("/timed")
+    public List<ReminderDTO> getTimedRemindersForToday() {
+        return reminderService.getTimedRemindersForToday();
+    }
 }

@@ -83,7 +83,7 @@
               <div v-for="(item, index) in remindersList" :key="item.id">
                 <template v-if="!isParentReminderCollapsed(item)">
                   <v-list-item @click="showReminderInfo(item)" :style="countIndent(item)">
-                    <v-list-item-action-text class="text--primary">
+                    <v-list-item-action-text class="text--primary col pa-0">
                       <v-btn icon class="v-btn--absolute ms-n9" v-if="haveChildrenReminders(item.id)"
                              @click.stop="switchCollapse(item.id, item.parentId)">
                         <v-icon size="20px" v-if="getCollapseIcon(item.id)">

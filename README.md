@@ -30,3 +30,14 @@ npm run serve
 - Погода - https://www.yr.no
 - Курс валют ЦБ - https://www.cbr.ru/currency_base/daily/
 - Курс валют Тинькофф - https://www.tinkoff.ru/about/exchange/
+
+## TelegramBot Service
+- Порт 8083
+
+#### Enviroment variables:
+- TELEGRAM_BOT_NAME
+- TELEGRAM_BOT_TOKEN
+- TELEGRAM_BOT_CHAT_ID
+
+## Eureka Service
+- Порт 8761

@@ -33,7 +33,7 @@ INSERT INTO reminders (title, expire_date, remind_date, remind_time, category_id
                        comment, parent_id, nesting_depth, periodic, period, periodicity, completed)
 VALUES ('Напоминание без даты окончания', null, null, null, null, null, null, null, false, null, null, false),
        ('Напоминание с датой окончания', '2025-04-09', null, null, null, null, null, null, false, null, null, false),
-       ('Напоминание с датой напоминания', '2025-04-09', '2025-06-06', null, null, null, null, null, false, null, null, false),
+       ('Напоминание с датой напоминания', '2025-04-09', '2023-07-06', null, null, 'Комментарий комментарий', null, null, false, null, null, false),
        ('Напоминание с датой и временем напоминания', '2025-04-09', '2023-06-06', '09:30:00', null, null, null, null, false, null, null, false),
        ('Напоминание с категорией 1', null, null, null, 1, null, null, null, false, null, null, false),
        ('Напоминание с категорией 2', null, null, null, 2, null, null, null, false, null, null, false),
