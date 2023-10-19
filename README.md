@@ -41,3 +41,9 @@ npm run serve
 
 ## Eureka Service
 - Порт 8761
+
+## Gateway Service
+- Порт 9000
+
+## Keycloak
+- Порт 8900

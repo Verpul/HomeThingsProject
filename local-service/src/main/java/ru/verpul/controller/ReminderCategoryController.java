@@ -10,7 +10,6 @@ import ru.verpul.service.ReminderCategoryService;
 import javax.validation.Valid;
 import java.util.List;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value = "/api/reminder/category", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
