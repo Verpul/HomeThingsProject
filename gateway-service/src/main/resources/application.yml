@@ -7,6 +7,13 @@ spring:
 
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "GET, POST, PUT, DELETE, OPTIONS"
+            allowedHeaders: "Authorization, Content-Type"
+            maxAge: 3600
       routes:
         - id: local-service
           uri: http://local-service:8081
@@ -16,3 +23,9 @@ spring:
           uri: http://api-service:8082
           predicates:
             - Path=/api/weather, /api/rates/**
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8900/realms/HomeThingsRealm

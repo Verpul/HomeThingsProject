@@ -59,7 +59,7 @@ public class HomeThingsBot extends TelegramLongPollingBot {
                 sendMessage(Command.HELP.getText());
                 break;
             case REMINDER_COMMAND:
-                reminderMessage.getRemindersMessage(localServiceFeign.getRemindersWithProperRemindDate());
+                sendMessage(reminderMessage.getRemindersMessage(localServiceFeign.getRemindersWithProperRemindDate()));
                 break;
             default:
                 sendMessage(UNRECOGNIZED_COMMAND_MESSAGE);

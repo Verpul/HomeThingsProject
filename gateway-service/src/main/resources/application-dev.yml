@@ -1,11 +1,6 @@
 spring:
   cloud:
     gateway:
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins: "*"
-            allowedMethods: "GET, POST, PUT, DELETE, PATCH"
       routes:
         - id: local-service
           uri: http://localhost:8081
@@ -20,4 +15,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri:
+          issuer-uri: http://localhost:8900/realms/HomeThingsRealm
+
+logging:
+  level:
+    root: info
