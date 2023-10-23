@@ -1,4 +1,4 @@
-name: HomeThings CI
+name: HomeThings CI without check
 
 on:
   workflow_dispatch:
@@ -92,6 +92,4 @@ jobs:
             docker-compose --file docker-compose.yml --env-file .env up -d
             docker system prune --all --force;
             rm .env
-          
-
-           
+         
