@@ -2,7 +2,7 @@ FROM node:lts-alpine as build-stage
 WORKDIR /app
 COPY frontend-service/package*.json .
 RUN npm install
-COPY . .
+COPY frontend-service/ .
 RUN npm run build
 
 FROM nginx:stable-alpine as production-stage
