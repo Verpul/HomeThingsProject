@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const CURRENCIES_RATE_API_URL = process.env.VUE_APP_API_SERVICE_URL + '/rates'
+const CURRENCIES_RATE_API_URL = process.env.VUE_APP_GATEWAY_SERVICE_URL + '/rates'
 
 class CurrenciesRateService {
 

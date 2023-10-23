@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const WEIGHT_API_URL = process.env.VUE_APP_LOCAL_SERVICE_URL + '/weight'
+const WEIGHT_API_URL = process.env.VUE_APP_GATEWAY_SERVICE_URL + '/weight'
 
 class WeightService {
 

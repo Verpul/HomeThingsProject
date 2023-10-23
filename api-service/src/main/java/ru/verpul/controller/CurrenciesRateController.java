@@ -12,7 +12,6 @@ import ru.verpul.service.CurrenciesRateService;
 @RestController
 @RequestMapping("/api/rates")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class CurrenciesRateController {
     private final CurrenciesRateService currenciesRateService;
 

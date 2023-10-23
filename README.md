@@ -3,7 +3,7 @@
 ## Frontend Service (Vue + Vuetify)
 - Порт 8080
 
-#### Запуск (требуется установка Node.js)
+#### Dev запуск (требуется установка Node.js)
 cmd -> cd frontend-service
 
 #### Скачивание пакетов
@@ -41,3 +41,17 @@ npm run serve
 
 ## Eureka Service
 - Порт 8761
+
+## Gateway Service
+- Порт 9000
+
+## Keycloak
+- Порт 8900
+
+#### Dev запуск (Требуется Docker)
+docker run -p 8900:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:22.0.4 start-dev
+Далее заходим на http://localhost:8900/ -> Administration Console -> Login -> Create Realm -> Выбрать файл из папки keycloak
+
+#### Default user for auth
+email: admin@admin.ru
+password: admin
