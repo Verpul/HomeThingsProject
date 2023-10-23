@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const WEATHER_API_URL = process.env.VUE_APP_API_SERVICE_URL + '/weather'
+const WEATHER_API_URL = process.env.VUE_APP_GATEWAY_SERVICE_URL + '/weather'
 
 class WeatherService {
 

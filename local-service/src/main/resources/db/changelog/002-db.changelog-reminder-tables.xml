@@ -1,0 +1,61 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet author="verpul" id="26.09.23-reminderCategoriesTable">
+        <createTable tableName="reminder_category">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="reminder_dates_pkey"/>
+            </column>
+            <column name="title" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="verpul" id="26.09.23-remindersTable">
+        <createTable tableName="reminders">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="reminders_pkey"/>
+            </column>
+            <column name="comment" type="VARCHAR(500)"/>
+            <column name="completed" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expire_date" type="date"/>
+            <column name="nesting_depth" type="INTEGER"/>
+            <column name="period" type="VARCHAR(255)"/>
+            <column name="periodic" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="periodicity" type="INTEGER"/>
+            <column name="remind_date" type="date"/>
+            <column name="remind_time" type="time(6) WITHOUT TIME ZONE"/>
+            <column name="title" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category_id" type="BIGINT"/>
+            <column name="parent_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="verpul" id="26.09.23-reminderCategoryTableTitleFieldUniqueConstraint">
+        <addUniqueConstraint columnNames="title" constraintName="reminder_category_title_unique" tableName="reminder_category"/>
+    </changeSet>
+
+    <changeSet author="verpul" id="26.09.23-reminderTableForeignKeyConstraintCategoryId">
+        <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="reminders"
+                                 constraintName="reminder_category_foreign_key" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="reminder_category" validate="true"/>
+    </changeSet>
+
+    <changeSet author="verpul" id="26.09.23-reminderTableForeignKeyConstraintParentId">
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="reminders"
+                                 constraintName="reminder_parent_foreign_key" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="reminders" validate="true"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,11 @@
+spring:
+  sql:
+    init:
+      mode: always
+
+  datasource:
+    username: postgres
+    password: root
+
+  liquibase:
+    enabled: false

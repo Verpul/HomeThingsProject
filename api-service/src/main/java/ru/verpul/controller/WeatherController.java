@@ -11,7 +11,6 @@ import ru.verpul.data.WeatherData;
 @RestController
 @RequestMapping("/api/weather")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class WeatherController {
     private final WeatherData weatherData;
 
