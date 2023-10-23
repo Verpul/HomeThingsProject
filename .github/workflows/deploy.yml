@@ -19,6 +19,15 @@ jobs:
           source: "docker-compose.yml"
           target: ${{secrets.PROJECT_FOLDER}}
           overwrite: true
+      - name: Copy keycloak setting via SSH
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{secrets.SSH_HOST}}
+          username: ${{secrets.SSH_USER}}
+          key: ${{secrets.SSH_PRIVATE_KEY}}
+          source: "keycloak"
+          target: ${{secrets.PROJECT_FOLDER}}
+          overwrite: true
 
   changes-filter:
     name: Apply changes filter on modules
@@ -121,7 +130,7 @@ jobs:
             cd ${{secrets.PROJECT_FOLDER}}
             echo POSTGRES_USER=${{secrets.POSTGRES_USER}} > .env
             echo POSTGRES_PASSWORD=${{secrets.POSTGRES_PASSWORD}} >> .env
-            echo KEYCLOAK_ADMIN=${{secrets.KC_ADMIN}} >> .env
+            echo KC_ADMIN=${{secrets.KC_ADMIN}} >> .env
             echo KC_ADMIN_PASSWORD=${{secrets.KC_ADMIN_PASSWORD}} >> .env
             
             if ${{ needs.changes-filter.outputs.eureka-service}}; then
