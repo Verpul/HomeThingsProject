@@ -23,7 +23,6 @@ jobs:
   build-and-push-images:
     name: Push images to Dockerhub
     runs-on: ubuntu-latest
-    needs: changes-filter
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
