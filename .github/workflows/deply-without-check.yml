@@ -20,37 +20,6 @@ jobs:
           target: ${{secrets.PROJECT_FOLDER}}
           overwrite: true
 
-  changes-filter:
-    name: Apply changes filter on modules
-    runs-on: ubuntu-latest
-    outputs:
-      eureka-service: ${{ steps.filter.outputs.eureka-service}}
-      gateway-service: ${{ steps.filter.outputs.gateway-service }}
-      keycloak: ${{ steps.filter.outputs.keycloak}}
-      local-service: ${{ steps.filter.outputs.local-service }}
-      api-service: ${{ steps.filter.outputs.api-service }}
-      frontend: ${{ steps.filter.outputs.frontend }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Apply changes filter
-        uses: dorny/paths-filter@v2 
-        id: filter
-        with:
-          filters: |
-            eureka-service:
-              - 'eureka-service/**'
-            gateway-service:
-              - 'gateway-service/**'
-            keycloak:
-              - 'keycloak/**'
-            local-service:
-              - 'local-service/**'
-            api-service:
-              - 'api-service/**'
-            frontend:
-              - 'frontend-service/**'
-
   build-and-push-images:
     name: Push images to Dockerhub
     runs-on: ubuntu-latest
@@ -67,7 +36,6 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Eureka service build and push to Dockerhub
-        if: ${{ needs.changes-filter.outputs.eureka-service == 'true' }}
         uses: docker/build-push-action@v2
         with:
           file: /eureka-service/Dockerfile
@@ -75,7 +43,6 @@ jobs:
           tags: verpul/homethings:eureka-service
 
       - name: Gateway service build and push to Dockerhub
-        if: ${{ needs.changes-filter.outputs.gateway-service == 'true' }}
         uses: docker/build-push-action@v2
         with:
           file: /gateway-service/Dockerfile
@@ -83,7 +50,6 @@ jobs:
           tags: verpul/homethings:gateway-service
 
       - name: Local service build and push to Dockerhub
-        if: ${{ needs.changes-filter.outputs.local-service == 'true' }}
         uses: docker/build-push-action@v2
         with:
           file: /local-service/Dockerfile
@@ -91,7 +57,6 @@ jobs:
           tags: verpul/homethings:local-service
 
       - name: API service build and push to Dockerhub
-        if: ${{ needs.changes-filter.outputs.api-service == 'true' }}
         uses: docker/build-push-action@v2
         with:
           file: /api-service/Dockerfile
@@ -99,7 +64,6 @@ jobs:
           tags: verpul/homethings:api-service
 
       - name: Frontend build and push to Dockerhub
-        if: ${{ needs.changes-filter.outputs.frontend == 'true' }}
         uses: docker/build-push-action@v2
         with:
           file: /frontend-service/Dockerfile
@@ -124,43 +88,9 @@ jobs:
             echo KEYCLOAK_ADMIN=${{secrets.KC_ADMIN}} >> .env
             echo KC_ADMIN_PASSWORD=${{secrets.KC_ADMIN_PASSWORD}} >> .env
             
-            if ${{ needs.changes-filter.outputs.eureka-service}}; then
-              docker stop eureka-service
-              docker rm eureka-service
-              docker rmi verpul/homethings:eureka-service
-            fi
-            
-            if ${{ needs.changes-filter.outputs.gateway-service}}; then
-              docker stop gateway-service
-              docker rm gateway-service
-              docker rmi verpul/homethings:gateway-service
-            fi
-            
-            if ${{ needs.changes-filter.outputs.keycloak}}; then
-              docker stop keycloak
-              docker rm keycloak
-              docker rmi quay.io/keycloak/keycloak
-            fi
-
-            if ${{ needs.changes-filter.outputs.local-service}}; then
-              docker stop local-service
-              docker rm local-service
-              docker rmi verpul/homethings:local-service
-            fi
-
-            if ${{ needs.changes-filter.outputs.api-service}}; then
-              docker stop api-service
-              docker rm api-service
-              docker rmi verpul/homethings:api-service
-            fi
-
-            if ${{ needs.changes-filter.outputs.frontend}}; then
-              docker stop frontend
-              docker rm frontend
-              docker rmi verpul/homethings:frontend
-            fi
-
+            docker-compose --file docker-compose.yml down;
             docker-compose --file docker-compose.yml --env-file .env up -d
+            docker system prune --all --force;
             rm .env
           
 
