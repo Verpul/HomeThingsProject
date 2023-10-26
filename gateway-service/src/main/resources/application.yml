@@ -28,4 +28,4 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8900/realms/HomeThingsRealm
+          issuer-uri: ${SERVER_HOST}/realms/HomeThingsRealm
