@@ -105,6 +105,8 @@ jobs:
           file: /frontend-service/Dockerfile
           push: true
           tags: verpul/homethings:frontend
+          build-args: |
+            SERVER_HOST=${{ secrets.SERVER_HOST }}
 
       - name: TG bot service build and push to Dockerhub
         if: ${{ needs.changes-filter.outputs.tg-bot-service == 'true' }}
@@ -134,6 +136,7 @@ jobs:
             echo TELEGRAM_BOT_NAME=${{secrets.TELEGRAM_BOT_NAME}} >> .env
             echo TELEGRAM_BOT_TOKEN=${{secrets.TELEGRAM_BOT_TOKEN}} >> .env
             echo TELEGRAM_BOT_CHAT_ID=${{secrets.TELEGRAM_BOT_CHAT_ID}} >> .env
+            echo SERVER_HOST=${{ secrets.SERVER_HOST }} >> .env
             
             if ${{ needs.changes-filter.outputs.eureka-service}}; then
               docker stop eureka-service

@@ -13,7 +13,11 @@ npm install
 npm run serve
 
 ### Prod запуск
-Требуется прописать в хостах 127.0.0.1 keycloak (/etc/hosts file (Linux) or C:\Windows\System32\drivers\etc\hosts (Windows))
+- Если сервер без HTTPS, то в первый раз требуется сделать следующее:
+  - После запуска контейнера зайти в него docker exec -it keycloak bash
+  - Команда для начала изменения конфига: bin/kcadm.sh config credentials --server http://IP_ADDR:8900 --realm master --user admin
+  - Команда отключения SSL: bin/kcadm.sh update realms/master -s sslRequired=NONE
+- Загрузить или настроить свой realm
 
 ## Local Service
 - Порт 8081
@@ -47,6 +51,9 @@ npm run serve
 
 ## Gateway Service
 - Порт 9000
+
+#### Enviroment variables:
+- SERVER_HOST - необходим для работы Keycloak
 
 ## Keycloak
 - Порт 8900
