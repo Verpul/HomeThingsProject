@@ -19,23 +19,14 @@ jobs:
           source: "docker-compose.yml"
           target: ${{secrets.PROJECT_FOLDER}}
           overwrite: true
-      - name: Copy keycloak setting via SSH
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{secrets.SSH_HOST}}
-          username: ${{secrets.SSH_USER}}
-          key: ${{secrets.SSH_PRIVATE_KEY}}
-          source: "keycloak"
-          target: ${{secrets.PROJECT_FOLDER}}
-          overwrite: true
 
   changes-filter:
     name: Apply changes filter on modules
     runs-on: ubuntu-latest
     outputs:
-      eureka-service: ${{ steps.filter.outputs.eureka-service}}
+      tg-bot-service: ${{ steps.filter.outputs.tg-bot-service }}
+      eureka-service: ${{ steps.filter.outputs.eureka-service }}
       gateway-service: ${{ steps.filter.outputs.gateway-service }}
-      keycloak: ${{ steps.filter.outputs.keycloak}}
       local-service: ${{ steps.filter.outputs.local-service }}
       api-service: ${{ steps.filter.outputs.api-service }}
       frontend: ${{ steps.filter.outputs.frontend }}
@@ -47,12 +38,12 @@ jobs:
         id: filter
         with:
           filters: |
+            tg-bot-service:
+              - 'tg-bot-service/**'
             eureka-service:
               - 'eureka-service/**'
             gateway-service:
               - 'gateway-service/**'
-            keycloak:
-              - 'keycloak/**'
             local-service:
               - 'local-service/**'
             api-service:
@@ -115,6 +106,14 @@ jobs:
           push: true
           tags: verpul/homethings:frontend
 
+      - name: TG bot service build and push to Dockerhub
+        if: ${{ needs.changes-filter.outputs.tg-bot-service == 'true' }}
+        uses: docker/build-push-action@v2
+        with:
+          file: /tg-bot-service/Dockerfile
+          push: true
+          tags: verpul/homethings:tg-bot-service
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -130,8 +129,11 @@ jobs:
             cd ${{secrets.PROJECT_FOLDER}}
             echo POSTGRES_USER=${{secrets.POSTGRES_USER}} > .env
             echo POSTGRES_PASSWORD=${{secrets.POSTGRES_PASSWORD}} >> .env
-            echo KC_ADMIN=${{secrets.KC_ADMIN}} >> .env
-            echo KC_ADMIN_PASSWORD=${{secrets.KC_ADMIN_PASSWORD}} >> .env
+            echo KEYCLOAK_ADMIN=${{secrets.KEYCLOAK_ADMIN}} >> .env
+            echo KEYCLOAK_ADMIN_PASSWORD=${{secrets.KEYCLOAK_ADMIN_PASSWORD}} >> .env
+            echo TELEGRAM_BOT_NAME=${{TELEGRAM_BOT_NAME}} >> .env
+            echo TELEGRAM_BOT_TOKEN=${{TELEGRAM_BOT_TOKEN}} >> .env
+            echo TELEGRAM_BOT_CHAT_ID=${{TELEGRAM_BOT_CHAT_ID}} >> .env
             
             if ${{ needs.changes-filter.outputs.eureka-service}}; then
               docker stop eureka-service
@@ -145,12 +147,6 @@ jobs:
               docker rmi verpul/homethings:gateway-service
             fi
             
-            if ${{ needs.changes-filter.outputs.keycloak}}; then
-              docker stop keycloak
-              docker rm keycloak
-              docker rmi quay.io/keycloak/keycloak
-            fi
-
             if ${{ needs.changes-filter.outputs.local-service}}; then
               docker stop local-service
               docker rm local-service
@@ -168,6 +164,12 @@ jobs:
               docker rm frontend
               docker rmi verpul/homethings:frontend
             fi
+            
+            if ${{ needs.changes-filter.outputs.tg-bot-service}}; then
+              docker stop tg-bot-service
+              docker rm tg-bot-service
+              docker rmi verpul/homethings:tg-bot-service
+            fi 
 
             docker-compose --file docker-compose.yml --env-file .env up -d
             rm .env

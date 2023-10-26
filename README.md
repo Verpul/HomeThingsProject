@@ -12,6 +12,9 @@ npm install
 #### Dev-запуск
 npm run serve
 
+### Prod запуск
+Требуется прописать в хостах 127.0.0.1 keycloak (/etc/hosts file (Linux) or C:\Windows\System32\drivers\etc\hosts (Windows))
+
 ## Local Service
 - Порт 8081
 

@@ -9,7 +9,7 @@ import java.util.List;
 @Component
 public class ReminderMessage {
     private static final String REMINDERS_TODAY_MESSAGE = "Дела на сегодня:\n";
-    private static final String NO_REMINDERS_MESSAGE = "Напоминаний требующих завершения нет";
+    private static final String NO_REMINDERS_MESSAGE = "Дел требующих завершения нет";
 
     public String getRemindersMessage(List<ReminderDTO> uncompletedReminders) {
         StringBuilder sb = new StringBuilder();

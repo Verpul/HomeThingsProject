@@ -19,64 +19,62 @@ jobs:
           source: "docker-compose.yml"
           target: ${{secrets.PROJECT_FOLDER}}
           overwrite: true
-      - name: Copy keycloak setting via SSH
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{secrets.SSH_HOST}}
-          username: ${{secrets.SSH_USER}}
-          key: ${{secrets.SSH_PRIVATE_KEY}}
-          source: "keycloak"
-          target: ${{secrets.PROJECT_FOLDER}}
-          overwrite: true
 
-#  build-and-push-images:
-#    name: Push images to Dockerhub
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v3
-#      - name: Login to DockerHub
-#        uses: docker/login-action@v3
-#        with:
-#          username: ${{ secrets.DOCKERHUB_USERNAME }}
-#          password: ${{ secrets.DOCKERHUB_TOKEN }}
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v2
-#
-#      - name: Frontend build and push to Dockerhub
-#        uses: docker/build-push-action@v2
-#        with:
-#          file: /frontend-service/Dockerfile
-#          push: true
-#          tags: verpul/homethings:frontend
-#
-#      - name: Eureka service build and push to Dockerhub
-#        uses: docker/build-push-action@v2
-#        with:
-#          file: /eureka-service/Dockerfile
-#          push: true
-#          tags: verpul/homethings:eureka-service
-#
-#      - name: Gateway service build and push to Dockerhub
-#        uses: docker/build-push-action@v2
-#        with:
-#          file: /gateway-service/Dockerfile
-#          push: true
-#          tags: verpul/homethings:gateway-service
-#
-#      - name: Local service build and push to Dockerhub
-#        uses: docker/build-push-action@v2
-#        with:
-#          file: /local-service/Dockerfile
-#          push: true
-#          tags: verpul/homethings:local-service
-#
-#      - name: API service build and push to Dockerhub
-#        uses: docker/build-push-action@v2
-#        with:
-#          file: /api-service/Dockerfile
-#          push: true
-#          tags: verpul/homethings:api-service
+  build-and-push-images:
+    name: Push images to Dockerhub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Frontend build and push to Dockerhub
+        uses: docker/build-push-action@v2
+        with:
+          file: /frontend-service/Dockerfile
+          push: true
+          tags: verpul/homethings:frontend
+
+      - name: Eureka service build and push to Dockerhub
+        uses: docker/build-push-action@v2
+        with:
+          file: /eureka-service/Dockerfile
+          push: true
+          tags: verpul/homethings:eureka-service
+
+      - name: Gateway service build and push to Dockerhub
+        uses: docker/build-push-action@v2
+        with:
+          file: /gateway-service/Dockerfile
+          push: true
+          tags: verpul/homethings:gateway-service
+
+      - name: Local service build and push to Dockerhub
+        uses: docker/build-push-action@v2
+        with:
+          file: /local-service/Dockerfile
+          push: true
+          tags: verpul/homethings:local-service
+
+      - name: API service build and push to Dockerhub
+        uses: docker/build-push-action@v2
+        with:
+          file: /api-service/Dockerfile
+          push: true
+          tags: verpul/homethings:api-service
+
+      - name: TG bot service build and push to Dockerhub
+        uses: docker/build-push-action@v2
+        with:
+          file: /tg-bot-service/Dockerfile
+          push: true
+          tags: verpul/homethings:tg-bot-service
 
   deploy:
     name: Deploy
@@ -93,8 +91,11 @@ jobs:
             cd ${{secrets.PROJECT_FOLDER}}
             echo POSTGRES_USER=${{secrets.POSTGRES_USER}} > .env
             echo POSTGRES_PASSWORD=${{secrets.POSTGRES_PASSWORD}} >> .env
-            echo KC_ADMIN=${{secrets.KC_ADMIN}} >> .env
-            echo KC_ADMIN_PASSWORD=${{secrets.KC_ADMIN_PASSWORD}} >> .env
+            echo KEYCLOAK_ADMIN=${{secrets.KEYCLOAK_ADMIN}} >> .env
+            echo KEYCLOAK_ADMIN_PASSWORD=${{secrets.KEYCLOAK_ADMIN_PASSWORD}} >> .env
+            echo TELEGRAM_BOT_NAME=${{TELEGRAM_BOT_NAME}} >> .env
+            echo TELEGRAM_BOT_TOKEN=${{TELEGRAM_BOT_TOKEN}} >> .env
+            echo TELEGRAM_BOT_CHAT_ID=${{TELEGRAM_BOT_CHAT_ID}} >> .env
             
             docker-compose --file docker-compose.yml down;
             docker-compose --file docker-compose.yml --env-file .env up -d

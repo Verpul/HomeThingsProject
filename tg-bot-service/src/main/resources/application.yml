@@ -9,3 +9,8 @@ bot:
   name: ${TELEGRAM_BOT_NAME}
   token: ${TELEGRAM_BOT_TOKEN}
   chat-id: ${TELEGRAM_BOT_CHAT_ID}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-service:8761/eureka
