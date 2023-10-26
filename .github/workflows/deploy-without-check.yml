@@ -97,8 +97,8 @@ jobs:
             echo TELEGRAM_BOT_TOKEN=${{secrets.TELEGRAM_BOT_TOKEN}} >> .env
             echo TELEGRAM_BOT_CHAT_ID=${{secrets.TELEGRAM_BOT_CHAT_ID}} >> .env
             
-            docker-compose --file docker-compose.yml down;
-            docker-compose --file docker-compose.yml --env-file .env up -d
+            docker compose --file docker-compose.yml down;
+            docker compose --file docker-compose.yml --env-file .env up -d
             docker system prune --all --force;
             rm .env
          

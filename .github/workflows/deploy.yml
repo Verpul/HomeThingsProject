@@ -171,7 +171,7 @@ jobs:
               docker rmi verpul/homethings:tg-bot-service
             fi 
 
-            docker-compose --file docker-compose.yml --env-file .env up -d
+            docker compose --file docker-compose.yml --env-file .env up -d
             rm .env
           
 
