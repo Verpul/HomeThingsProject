@@ -99,6 +99,7 @@ jobs:
             echo TELEGRAM_BOT_TOKEN=${{secrets.TELEGRAM_BOT_TOKEN}} >> .env
             echo TELEGRAM_BOT_CHAT_ID=${{secrets.TELEGRAM_BOT_CHAT_ID}} >> .env
             echo SERVER_HOST=${{ secrets.SERVER_HOST }} >> .env
+            echo TIMEZONE=Europe/Moscow >> .env
             
             docker compose --file docker-compose.yml down;
             docker compose --file docker-compose.yml --env-file .env up -d

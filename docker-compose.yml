@@ -9,6 +9,7 @@ services:
       POSTGRES_DB: homethings_db
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      TZ: ${TIMEZONE}
     ports:
       - "5432"
     volumes:
@@ -18,6 +19,8 @@ services:
     image: verpul/homethings:frontend
     container_name: frontend
     restart: unless-stopped
+    environment:
+      TZ: ${TIMEZONE}
     ports:
       - '80:8080'
 
@@ -25,6 +28,8 @@ services:
     image: verpul/homethings:eureka-service
     container_name: eureka-service
     restart: unless-stopped
+    environment:
+      TZ: ${TIMEZONE}
 
   gateway-service:
     image: verpul/homethings:gateway-service
@@ -32,6 +37,7 @@ services:
     restart: unless-stopped
     environment:
       SERVER_HOST: ${SERVER_HOST}
+      TZ: ${TIMEZONE}
     ports:
       - "9000:9000"
 
@@ -48,6 +54,7 @@ services:
       KC_DB_SCHEMA: public
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      TZ: ${TIMEZONE}
     ports:
       - "8900:8900"
     depends_on:
@@ -62,6 +69,7 @@ services:
       POSTGRES_DB: homethings_db
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      TZ: ${TIMEZONE}
     ports:
       - "8081"
     depends_on:
@@ -71,6 +79,8 @@ services:
     image: verpul/homethings:api-service
     container_name: api-service
     restart: unless-stopped
+    environment:
+      TZ: ${TIMEZONE}
     ports:
       - "8082"
 
@@ -82,6 +92,7 @@ services:
       TELEGRAM_BOT_NAME: ${TELEGRAM_BOT_NAME}
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       TELEGRAM_BOT_CHAT_ID: ${TELEGRAM_BOT_CHAT_ID}
+      TZ: ${TIMEZONE}
     ports:
       - "8083"
     depends_on:

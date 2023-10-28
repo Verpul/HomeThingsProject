@@ -1,7 +1,9 @@
 package ru.verpul.schedule;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.verpul.DTO.ReminderDTO;
@@ -11,28 +13,41 @@ import ru.verpul.message.ReminderMessage;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
 @Setter
+@Slf4j
 public class ReminderSchedule {
     private final HomeThingsBot homeThingsBot;
     private final ReminderMessage reminderMessage;
     private final LocalServiceFeign localServiceFeign;
 
-    private List<ReminderDTO> timedReminders;
+    private List<ReminderDTO> timedReminders = new ArrayList<>();
 
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 1 0 * * *")
     private void everyDayRemindersCheck() {
-        List<ReminderDTO> uncompletedReminders = localServiceFeign.getRemindersWithProperRemindDate();
-        String message = reminderMessage.getRemindersMessage(uncompletedReminders);
-        homeThingsBot.sendMessage(message);
+        try {
+            List<ReminderDTO> uncompletedReminders = localServiceFeign.getRemindersWithProperRemindDate();
+            String message = reminderMessage.getRemindersMessage(uncompletedReminders);
+            homeThingsBot.sendMessage(message);
+        } catch (FeignException e) {
+            log.error("Ошибка при загрузке данных о напоминаниях", e);
+        }
     }
 
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 1 0 * * *")
     private void everyDayTimedRemindersCheck() {
-        timedReminders = localServiceFeign.getTimedRemindersForToday();
+        try {
+            timedReminders = localServiceFeign.getTimedRemindersForToday();
+        } catch (FeignException e) {
+            log.error("Ошибка при загрузке данных о напоминаниях со временем", e);
+        }
     }
 
     @Scheduled(cron = "0 * * * * *")
@@ -49,7 +64,8 @@ public class ReminderSchedule {
     }
 
     @PostConstruct
-    private void loadTimedRemindersOnStartup() {
-        everyDayTimedRemindersCheck();
+    private void loadTimedReminderOnStartup() {
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.schedule(this::everyDayTimedRemindersCheck, 3, TimeUnit.MINUTES);
     }
 }
