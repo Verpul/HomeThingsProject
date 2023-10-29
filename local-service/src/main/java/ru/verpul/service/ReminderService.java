@@ -14,7 +14,6 @@ import ru.verpul.repository.ReminderRepository;
 import ru.verpul.util.ReminderUtil;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -159,7 +158,7 @@ public class ReminderService {
     }
 
     public List<ReminderDTO> getRemindersWithProperRemindDate() {
-        return reminderRepository.getReminderWithRemindDateAndTimeLessThanNow().stream()
+        return reminderRepository.getReminderWithRemindDateEqualsOrLessThanNow().stream()
                 .map(reminderMapper::reminderToReminderDTO)
                 .collect(Collectors.toList());
 
