@@ -2,6 +2,7 @@ package ru.verpul.util;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class CommonUtil {
 
@@ -11,6 +12,6 @@ public class CommonUtil {
 
     public static String formatDateTime(String date, String pattern) {
         return LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"))
-                .format(DateTimeFormatter.ofPattern(pattern));
+                .format(DateTimeFormatter.ofPattern(pattern).localizedBy(new Locale("ru", "RU")));
     }
 }
