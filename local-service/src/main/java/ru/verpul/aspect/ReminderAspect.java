@@ -1,6 +1,8 @@
 package ru.verpul.aspect;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -11,6 +13,7 @@ import ru.verpul.service.ReminderService;
 @Component
 @Aspect
 @RequiredArgsConstructor
+@Slf4j
 public class ReminderAspect {
 
     private final ReminderService reminderService;
@@ -24,6 +27,10 @@ public class ReminderAspect {
 
     @AfterReturning("inReminderService() && transactionalMethods()")
     public void afterTransactionalMethod() {
-        tgBotFeign.updateTimedRemindersData(reminderService.getTimedRemindersForToday());
+        try {
+            tgBotFeign.updateTimedRemindersData(reminderService.getTimedRemindersForToday());
+        } catch (FeignException e) {
+            log.error("Ошибка при отправке данных о напоминаниях в tg-bot-service", e);
+        }
     }
 }

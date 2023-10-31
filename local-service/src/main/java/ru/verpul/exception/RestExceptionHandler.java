@@ -30,6 +30,11 @@ public class RestExceptionHandler {
 
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(FileValidationException.class)
+    public String handleFileValidationError(FileValidationException exception) { return exception.getMessage(); }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationError(MethodArgumentNotValidException exception) {
         Map<String, String> errors = new HashMap<>();

@@ -1,5 +1,7 @@
 package ru.verpul.DTO;
 
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +21,8 @@ public class WeightRecordDTO {
 
     @PastOrPresent(message = "Дата взвешивания не может быть больше текущей")
     @NotNull(message = "Поле должно быть заполнено")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
+    @CsvBindByName(required = true)
     private LocalDate weightRecordDate;
 
     @NotBlank(message = "Поле должно быть заполнено")
