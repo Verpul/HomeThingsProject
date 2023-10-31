@@ -26,17 +26,17 @@
 
                 <td style="vertical-align: top">
                   <v-text-field type="date" density="compact" variant="underlined" v-model="weightRecordDate"
-                                :error-messages="errorMessages.weightRecordDate"></v-text-field>
+                                :error-messages="weightRecordsErrors.weightRecordDate"></v-text-field>
                 </td>
                 <td style="vertical-align: top">
                   <v-text-field density="compact" variant="underlined" v-model="weightRecordValue"
                                 placeholder=">50 и <99.9"
-                                :error-messages="errorMessages.weightRecordValue"></v-text-field>
+                                :error-messages="weightRecordsErrors.weightRecordValue"></v-text-field>
                 </td>
                 <td style="vertical-align: top"></td>
                 <td>
                   <div class="d-inline-block" style="white-space: nowrap">
-                    <v-btn density="compact" icon @click="submitRecord">
+                    <v-btn density="compact" icon @click="saveWeightRecord()">
                       <v-icon color="success">{{ id ? 'mdi mdi-check-circle-outline' : 'mdi mdi-plus-box-outline' }}
                       </v-icon>
                     </v-btn>
@@ -44,12 +44,29 @@
                            class="ms-3" icon>
                       <v-icon color="primary">mdi-close-circle-outline</v-icon>
                     </v-btn>
+                    <v-menu bottom left offset-y v-else>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn density="compact" class="ms-3" icon
+                               v-bind="attrs"
+                               v-on="on">
+                          <v-icon color="primary">mdi mdi-cog</v-icon>
+                        </v-btn>
+                      </template>
+                      <v-list>
+                        <v-list-item
+                            link
+                            @click="showWeightLoadCSVDialog"
+                        >
+                          <v-list-item-title class="text-body-2">Загрузить данные из CSV</v-list-item-title>
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
                   </div>
                 </td>
 
               </tr>
               <tr
-                  v-for="(record) in records"
+                  v-for="(record) in weightRecords"
                   :key="record.id"
               >
                 <td>{{ record.formattedWeightRecordDate }}</td>
@@ -76,71 +93,74 @@
         </v-card>
       </v-container>
     </v-main>
+
+    <v-dialog v-model="weightLoadCSVDataDialog" max-width="600" persistent>
+      <WeightCSVDialogComponent @showWeightLoadCSVDialog="showWeightLoadCSVDialog"></WeightCSVDialogComponent>
+    </v-dialog>
   </v-app>
 </template>
 
 <script>
-import WeightService from "@/service/WeightService";
+import WeightCSVDialogComponent from "@/components/WeightCSVDialogComponent";
 
 export default {
   name: 'WeightComponent',
   data() {
     return {
-      records: [],
       weightRecordDate: "",
       weightRecordValue: "",
-      id: "",
-      errorMessages: {}
+      id: null,
+      weightLoadCSVDataDialog: false
     };
   },
   methods: {
-    loadRecords() {
-      WeightService.getAllRecords().then((res) => {
-        this.records = res.data;
-      });
-    },
-    submitRecord() {
-      if (this.id === "") {
-        WeightService.createRecord({
-          weightRecordDate: this.weightRecordDate,
-          weightRecordValue: this.weightRecordValue,
-        }).then(() => {
-          this.clearFields();
-          this.loadRecords();
-        }).catch((error) => {
-          this.errorMessages = error.response.data;
-        })
-      } else {
-        WeightService.updateRecord(this.id, {
-          id: this.id,
-          weightRecordDate: this.weightRecordDate,
-          weightRecordValue: this.weightRecordValue,
-        }).then(() => {
-          this.clearFields();
-          this.loadRecords();
-        }).catch((error) => {
-          this.errorMessages = error.response.data;
-        })
+    async saveWeightRecord() {
+      const action = this.id === null ? "createRecord" : "updateRecord";
+
+      this.$store.commit("setWeightRecordsErrors", {errors: []});
+
+      await this.$store.dispatch(action, {
+        id: this.id,
+        weightRecordDate: this.weightRecordDate,
+        weightRecordValue: this.weightRecordValue,
+      })
+
+      if (this.weightRecordsErrors.length === 0) {
+        this.clearFields();
       }
+    },
+    deleteRecord(id) {
+      this.$store.dispatch("deleteRecord", id);
+      this.clearFields();
+    },
+    clearFields() {
+      this.id = null;
+      this.weightRecordDate = "";
+      this.weightRecordValue = "";
+      this.$store.commit("setWeightRecordsErrors", {errors: []});
     },
     setEditMode(record) {
       this.weightRecordDate = record.weightRecordDate;
       this.weightRecordValue = record.weightRecordValue;
       this.id = record.id;
     },
-    deleteRecord(id) {
-      WeightService.deleteRecord(id).then(() => {
-        this.loadRecords();
-      });
+    showWeightLoadCSVDialog() {
+      this.weightLoadCSVDataDialog = !this.weightLoadCSVDataDialog;
+    }
+  },
+  computed: {
+    weightRecords() {
+      return this.$store.getters.weightRecords;
     },
-    clearFields() {
-      this.errorMessages = {};
-      this.id = "";
-      this.$refs.form.reset();
+    weightRecordsErrors() {
+      return this.$store.getters.weightRecordsErrors;
     }
   },
   created() {
-    this.loadRecords();
+    this.$store.dispatch("getAllRecords")
   },
+  components: {
+    WeightCSVDialogComponent
+  }
 }
 </script>

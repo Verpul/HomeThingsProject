@@ -1,7 +1,9 @@
 name: HomeThings CI
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - master
 
 jobs:
   copy-compose:
