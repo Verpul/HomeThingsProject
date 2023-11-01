@@ -1,7 +1,5 @@
 spring:
   jpa:
-    hibernate:
-      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
@@ -12,9 +10,6 @@ spring:
       mode: always
       schema-locations: classpath*:db/devdata/schema.sql
       data-locations: classpath*:db/devdata/data.sql
-
-  liquibase:
-    enabled: false
 
 eureka:
   client:

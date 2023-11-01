@@ -31,6 +31,14 @@
             <v-list-item-title>Контроль веса</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item to="/twitch">
+          <v-list-item-action>
+            <v-icon>mdi mdi-twitch</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Twitch</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
 
       <template v-slot:append>
