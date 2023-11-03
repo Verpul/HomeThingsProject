@@ -17,7 +17,7 @@ public class TwitchController {
 
     @GetMapping("/token/authorized")
     public boolean getAuthorized() {
-        return twitchService.getAuthorized();
+        return twitchService.haveTwitchToken();
     }
 
     @PostMapping("/token/{code}")

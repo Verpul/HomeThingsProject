@@ -88,8 +88,8 @@ export default {
     getTwitchAuthLink() {
       const twitchBaseLink = "https://id.twitch.tv/oauth2/authorize?";
       const twitchResponseType = "response_type=code";
-      const twitchClientId = "&client_id=ebrxut4iey9tyh8ifxc86o4msf8t1p";
-      const twitchRedirectUrl = "&redirect_uri=http://localhost:8080/twitch";
+      const twitchClientId = "&client_id=" + process.env.VUE_APP_TWITCH_CLIENT_ID;
+      const twitchRedirectUrl = "&redirect_uri=" +  process.env.VUE_APP_TWITH_REDIRECT_URI;
       const twitchScope = "&scope=user:read:follows";
 
       return twitchBaseLink + twitchResponseType + twitchClientId + twitchRedirectUrl + twitchScope;

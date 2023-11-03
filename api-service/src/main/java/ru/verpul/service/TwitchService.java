@@ -37,7 +37,16 @@ public class TwitchService {
     private final TwitchFeign twitchFeign;
     private final TwitchClientComponent twitchClientComponent;
 
-    public boolean getAuthorized() {
+    public void validateTokenAndStartTwitchClient() {
+        if (haveTwitchToken()) {
+            if (!validateToken(localServiceFeign.getTwitchToken()))  {
+                refreshToken();
+            }
+            twitchClientComponent.start();
+        }
+    }
+
+    public boolean haveTwitchToken() {
         TwitchTokenDTO token = null;
         try {
             token = localServiceFeign.getTwitchToken();
@@ -75,14 +84,14 @@ public class TwitchService {
         return false;
     }
 
-    private void refreshToken(TwitchTokenDTO token) {
+    public void refreshToken() {
         try {
+            TwitchTokenDTO token = localServiceFeign.getTwitchToken();
             ResponseEntity<TwitchTokenDTO> response = twitchFeign.refreshToken(clientId, clientSecret, "refresh_token", token.getRefreshToken());
 
             if (response.getStatusCodeValue() == 200) {
                 TwitchTokenDTO refreshedToken = response.getBody();
                 localServiceFeign.saveTwitchToken(refreshedToken);
-                twitchClientComponent.start();
             }
         } catch (FeignException e) {
             log.error("Не удалось обновить токен", e);
@@ -90,9 +99,6 @@ public class TwitchService {
     }
 
     public List<TwitchChannelDTO> getFollowedChannels() {
-        TwitchTokenDTO token = localServiceFeign.getTwitchToken();
-        if (!validateToken(token)) refreshToken(token);
-
         OutboundFollowing followedChannels = twitchClientComponent
                 .getTwitchClient()
                 .getHelix()
@@ -123,6 +129,7 @@ public class TwitchService {
     public void saveTwitchChannel(TwitchChannelDTO twitchChannelDTO) {
         try {
             localServiceFeign.saveTwitchChannel(twitchChannelDTO);
+            validateTokenAndStartTwitchClient();
         } catch (FeignException e) {
             log.error("Не удалось сохранить twitch-канал", e);
         }
