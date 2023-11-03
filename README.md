@@ -43,6 +43,7 @@ npm run serve
 - CLIENT_ID (Twitch)
 - CLIENT_SECRET (Twitch)
 - REDIRECT_URI (Twitch)
+- USER_ID (Twitch)
 
 ## TelegramBot Service
 - Порт 8083
