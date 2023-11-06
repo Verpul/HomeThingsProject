@@ -1,8 +1,7 @@
 package ru.verpul.schedule;
 
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.verpul.service.TwitchService;
