@@ -6,7 +6,9 @@ RUN npm install
 COPY frontend-service/ .
 
 ARG SERVER_HOST
+ARG TWITCH_REDIRECT_URI
 RUN sed -i 's/VUE_APP_KEYCLOAK_URL=/VUE_APP_KEYCLOAK_URL=${SERVER_HOST}/g' .env.production
+RUN sed -i 's/VUE_APP_TWITH_REDIRECT_URI=/VUE_APP_TWITH_REDIRECT_URI=${TWITCH_REDIRECT_URI}/g' .env.production
 
 RUN npm run build
 

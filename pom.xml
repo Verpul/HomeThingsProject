@@ -36,6 +36,7 @@
         <spring-cloud.version>2021.0.8</spring-cloud.version>
         <telegrambots.version>6.8.0</telegrambots.version>
         <opencsv.version>5.7.1</opencsv.version>
+        <twithc4j.version>1.16.0</twithc4j.version>
     </properties>
 
     <dependencyManagement>
@@ -56,6 +57,11 @@
                 <groupId>com.opencsv</groupId>
                 <artifactId>opencsv</artifactId>
                 <version>${opencsv.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.twitch4j</groupId>
+                <artifactId>twitch4j</artifactId>
+                <version>${twithc4j.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

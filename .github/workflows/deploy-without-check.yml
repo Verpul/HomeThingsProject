@@ -42,6 +42,7 @@ jobs:
           tags: verpul/homethings:frontend
           build-args: |
             SERVER_HOST=${{ secrets.SERVER_HOST }}
+            TWITCH_REDIRECT_URI={{ secrets.TWITCH_REDIRECT_URI }}
 
       - name: Eureka service build and push to Dockerhub
         uses: docker/build-push-action@v2
@@ -99,6 +100,7 @@ jobs:
             echo TELEGRAM_BOT_TOKEN=${{secrets.TELEGRAM_BOT_TOKEN}} >> .env
             echo TELEGRAM_BOT_CHAT_ID=${{secrets.TELEGRAM_BOT_CHAT_ID}} >> .env
             echo SERVER_HOST=${{ secrets.SERVER_HOST }} >> .env
+            echo TWITCH_REDIRECT_URI={{ secrets.TWITCH_REDIRECT_URI }} >> .env
             echo TIMEZONE=Europe/Moscow >> .env
             
             docker compose --file docker-compose.yml down;

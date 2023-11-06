@@ -17,8 +17,8 @@ public class ReminderMessage {
         if (uncompletedReminders.isEmpty()) {
             sb.append(NO_REMINDERS_MESSAGE);
         } else {
+            sb.append(REMINDERS_TODAY_MESSAGE);
             uncompletedReminders.forEach(reminder -> {
-                sb.append(REMINDERS_TODAY_MESSAGE);
                 sb.append(reminder.getTitle());
                 if(reminder.getExpireDate() != null) {
                     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
