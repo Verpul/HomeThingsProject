@@ -11,7 +11,7 @@ eureka:
       defaultZone: http://eureka-service:8761/eureka
 
 twitch:
-  client-id: ${CLIENT_ID}
-  client-secret: ${CLIENT_SECRET}
-  redirect-uri: ${REDIRECT_URI}
-  user-id: ${USER_ID}
+  client-id: ${TWITCH_CLIENT_ID}
+  client-secret: ${TWITCH_CLIENT_SECRET}
+  redirect-uri: ${TWITCH_REDIRECT_URI}
+  user-id: ${TWITCH_USER_ID}

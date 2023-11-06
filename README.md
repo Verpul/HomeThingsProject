@@ -40,10 +40,10 @@ npm run serve
 - Twitch - https://www.twitch.tv/
 
 #### Enviroment variables:
-- CLIENT_ID (Twitch)
-- CLIENT_SECRET (Twitch)
-- REDIRECT_URI (Twitch)
-- USER_ID (Twitch)
+- TWITCH_CLIENT_ID 
+- TWITCH_CLIENT_SECRET 
+- TWITCH_REDIRECT_URI 
+- TWITCH_USER_ID 
 
 ## TelegramBot Service
 - Порт 8083
