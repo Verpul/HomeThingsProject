@@ -42,6 +42,7 @@ jobs:
           tags: verpul/homethings:frontend
           build-args: |
             SERVER_HOST=${{ secrets.SERVER_HOST }}
+            TWITCH_REDIRECT_URI={{ secrets.TWITCH_REDIRECT_URI }}
 
       - name: Eureka service build and push to Dockerhub
         uses: docker/build-push-action@v2

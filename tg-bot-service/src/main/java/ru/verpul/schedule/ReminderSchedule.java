@@ -4,6 +4,7 @@ import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.verpul.DTO.ReminderDTO;
@@ -27,6 +28,8 @@ public class ReminderSchedule {
     private final HomeThingsBot homeThingsBot;
     private final ReminderMessage reminderMessage;
     private final LocalServiceFeign localServiceFeign;
+    private final DiscoveryClient discoveryClient;
+
 
     private List<ReminderDTO> timedReminders = new ArrayList<>();
 
@@ -65,7 +68,13 @@ public class ReminderSchedule {
 
     @PostConstruct
     private void loadTimedReminderOnStartup() {
-        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.schedule(this::everyDayTimedRemindersCheck, 3, TimeUnit.MINUTES);
+        boolean localServiceDown = discoveryClient.getInstances("local-service").isEmpty();
+
+        if (localServiceDown) {
+            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+            executorService.schedule(this::everyDayTimedRemindersCheck, 10, TimeUnit.SECONDS);
+        } else {
+            loadTimedReminderOnStartup();
+        }
     }
 }

@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.verpul.DTO.TwitchChannelDTO;
 import ru.verpul.DTO.TwitchTokenDTO;
+import ru.verpul.enums.TwitchEvent;
 import ru.verpul.feign.LocalServiceFeign;
 import ru.verpul.feign.TGBotFeign;
 
@@ -50,13 +51,27 @@ public class TwitchClientComponent {
             twitchClient.getClientHelper().enableStreamEventListener(savedChannelsNames);
 
             twitchClient.getEventManager().onEvent(ChannelGoLiveEvent.class, (channelGoLiveEvent) -> {
-                String message = channelGoLiveEvent.getChannel().getName() + " начал трансляцию";
-                tgBotFeign.sendTGNotification(message);
+                String channelName = channelGoLiveEvent.getChannel().getName();
+
+                boolean channelGoLiveTrigger = savedChannels.stream()
+                        .anyMatch(channel -> channel.getChannelName().equals(channelName) && channel.getWentLiveNotification());
+
+                if (channelGoLiveTrigger) {
+                    String message = channelGoLiveEvent.getChannel().getName() + " начал трансляцию";
+                    tgBotFeign.sendTGNotification(message);
+                }
             });
 
             twitchClient.getEventManager().onEvent(ChannelChangeGameEvent.class, channelChangeGameEvent -> {
-                String message = channelChangeGameEvent.getChannel().getName() + " сменил категорию на " + channelChangeGameEvent.getStream().getGameName();
-                tgBotFeign.sendTGNotification(message);
+                String channelName = channelChangeGameEvent.getChannel().getName();
+
+                boolean channelChangeGameEventTrigger = savedChannels.stream()
+                        .anyMatch(channel -> channel.getChannelName().equals(channelName) && channel.getChangedCategoryNotification());
+
+                if (channelChangeGameEventTrigger) {
+                    String message = channelName + " сменил категорию на " + channelChangeGameEvent.getStream().getGameName();
+                    tgBotFeign.sendTGNotification(message);
+                }
             });
 
         } catch (FeignException e) {
