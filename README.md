@@ -73,3 +73,10 @@ docker run -p 8900:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin
 #### Default user for auth
 email: admin@admin.ru
 password: admin
+
+## Logging (https://sentry.io/)
+Можно настроить любой уровень отправки логов, но на бесплатном тарифе ограничение 5000 ошибок(записей) в месяц
+
+#### Enviroment variables:
+- SENTRY_DSN (Для всех Java Spring сервисов)
+

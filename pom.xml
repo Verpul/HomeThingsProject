@@ -37,7 +37,21 @@
         <telegrambots.version>6.8.0</telegrambots.version>
         <opencsv.version>5.7.1</opencsv.version>
         <twithc4j.version>1.16.0</twithc4j.version>
+        <sentry.version>6.26.0</sentry.version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.sentry</groupId>
+            <artifactId>sentry-spring-boot-starter</artifactId>
+            <version>${sentry.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.sentry</groupId>
+            <artifactId>sentry-logback</artifactId>
+            <version>${sentry.version}</version>
+        </dependency>
+    </dependencies>
 
     <dependencyManagement>
         <dependencies>
