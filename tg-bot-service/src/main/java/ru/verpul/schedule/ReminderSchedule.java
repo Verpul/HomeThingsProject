@@ -72,9 +72,9 @@ public class ReminderSchedule {
 
         if (localServiceDown) {
             ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-            executorService.schedule(this::everyDayTimedRemindersCheck, 10, TimeUnit.SECONDS);
+            executorService.schedule(this::loadTimedReminderOnStartup, 10, TimeUnit.SECONDS);
         } else {
-            loadTimedReminderOnStartup();
+            everyDayTimedRemindersCheck();
         }
     }
 }

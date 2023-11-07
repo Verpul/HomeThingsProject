@@ -14,3 +14,9 @@ eureka:
   client:
     service-url:
       defaultZone: http://eureka-service:8761/eureka
+
+sentry:
+  dsn: ${SENTRY_DSN:}
+  traces-sample-rate: 1.0
+  logging:
+    minimum-event-level: error

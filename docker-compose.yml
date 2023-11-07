@@ -30,6 +30,7 @@ services:
     restart: unless-stopped
     environment:
       TZ: ${TIMEZONE}
+      SENTRY_DSN: ${SENTRY_DSN}
 
   gateway-service:
     image: verpul/homethings:gateway-service
@@ -38,6 +39,7 @@ services:
     environment:
       SERVER_HOST: ${SERVER_HOST}
       TZ: ${TIMEZONE}
+      SENTRY_DSN: ${SENTRY_DSN}
     ports:
       - "9000:9000"
 
@@ -70,6 +72,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       TZ: ${TIMEZONE}
+      SENTRY_DSN: ${SENTRY_DSN}
     ports:
       - "8081"
     depends_on:
@@ -85,6 +88,7 @@ services:
       TWITCH_REDIRECT_URI: ${TWITCH_REDIRECT_URI}
       TWITCH_USER_ID: ${TWITCH_USER_ID}
       TZ: ${TIMEZONE}
+      SENTRY_DSN: ${SENTRY_DSN}
     ports:
       - "8082"
 
@@ -97,6 +101,7 @@ services:
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       TELEGRAM_BOT_CHAT_ID: ${TELEGRAM_BOT_CHAT_ID}
       TZ: ${TIMEZONE}
+      SENTRY_DSN: ${SENTRY_DSN}
     ports:
       - "8083"
     depends_on:
