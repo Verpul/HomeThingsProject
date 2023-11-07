@@ -43,7 +43,7 @@
 
       <template v-slot:append>
         <v-divider></v-divider>
-        <v-list-item>
+        <v-list-item @click="logout">
           <v-list-item-action>
             <v-icon>mdi-logout</v-icon>
           </v-list-item-action>
@@ -70,6 +70,11 @@ export default {
   data: () => ({
     drawer: null,
     miniVariant: false
-  })
+  }),
+  methods: {
+    logout() {
+      this.$keycloak.logout();
+    }
+  }
 }
 </script>
