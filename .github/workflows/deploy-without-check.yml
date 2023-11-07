@@ -104,6 +104,7 @@ jobs:
             echo TWITCH_CLIENT_SECRET=${{ secrets.TWITCH_CLIENT_SECRET }} >> .env
             echo TWITCH_REDIRECT_URI=${{ secrets.TWITCH_REDIRECT_URI }} >> .env
             echo TWITCH_USER_ID=${{ secrets.TWITCH_USER_ID }} >> .env
+            echo SENTRY_DSN=${{secrets.SENTRY_DSN}} >> .env
             echo TIMEZONE=Europe/Moscow >> .env
             
             docker compose --file docker-compose.yml down;
