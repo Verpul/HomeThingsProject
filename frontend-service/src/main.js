@@ -17,6 +17,7 @@ let initOptions = {
 }
 
 let keycloak = new Keycloak(initOptions);
+Vue.prototype.$keycloak = keycloak;
 
 keycloak.init({onLoad: initOptions.onLoad}).then((auth) => {
   if (!auth) {
