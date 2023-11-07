@@ -48,6 +48,7 @@ public class TwitchClientComponent {
                     .map(TwitchChannelDTO::getChannelName)
                     .collect(Collectors.toList());
 
+            twitchClient.getEventManager().close();
             twitchClient.getClientHelper().enableStreamEventListener(savedChannelsNames);
 
             twitchClient.getEventManager().onEvent(ChannelGoLiveEvent.class, (channelGoLiveEvent) -> {
