@@ -111,7 +111,7 @@ public class TwitchService {
                 .map(followedChannel -> {
                     TwitchChannelDTO channel = new TwitchChannelDTO();
                     channel.setChannelId(followedChannel.getBroadcasterId());
-                    channel.setChannelName(followedChannel.getBroadcasterName());
+                    channel.setChannelName(followedChannel.getBroadcasterLogin());
 
                     return channel;
                 }).collect(Collectors.toList());
