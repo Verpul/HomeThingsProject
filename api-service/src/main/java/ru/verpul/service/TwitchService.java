@@ -93,6 +93,7 @@ public class TwitchService {
             if (response.getStatusCodeValue() == 200) {
                 TwitchTokenDTO refreshedToken = response.getBody();
                 localServiceFeign.saveTwitchToken(refreshedToken);
+                twitchClientComponent.start();
             }
         } catch (FeignException e) {
             log.error("Не удалось обновить токен", e);
