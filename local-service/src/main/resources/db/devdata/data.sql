@@ -59,6 +59,7 @@ SEQUENCE currency_id_seq RESTART WITH 1;
 
 INSERT INTO currency (currency_from, from_amount, currency_to, to_amount, rate, exchange_date)
 VALUES ('RUB', 1000, 'USD', 100, 10, '2020-01-01'),
-    ('RUB', 2000, 'EUR', 100, 20, '2020-02-01');
+    ('RUB', 2000, 'EUR', 100, 20, '2020-02-01'),
+    ('EUR', 50, 'USD', 55, 1.1, '2021-01-01');
 
 
