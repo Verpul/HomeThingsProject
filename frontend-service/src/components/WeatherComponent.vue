@@ -30,7 +30,7 @@
         </v-card>
       </v-col>
       <v-col class="col-5">
-        <CurrencyComponent />
+        <CurrencyRateComponent />
       </v-col>
     </v-row>
 
@@ -145,7 +145,7 @@
 
 <script>
 import WeatherService from "@/service/WeatherService";
-import CurrencyComponent from "@/components/CurrencyComponent";
+import CurrencyRateComponent from "@/components/CurrencyRateComponent";
 
 export default {
   name: "WeatherComponent",
@@ -183,7 +183,7 @@ export default {
     this.loadData()
   },
   components: {
-    CurrencyComponent
+    CurrencyRateComponent
   }
 }
 </script>

@@ -1,6 +1,6 @@
 drop table  if exists weight_records;
 drop table if exists reminder_category cascade;
-drop table if exists reminders cascade ;
+drop table if exists reminders cascade;
 
 create table if not exists reminder_category
 (

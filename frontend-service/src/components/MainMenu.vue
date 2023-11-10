@@ -39,6 +39,14 @@
             <v-list-item-title>Twitch</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item to="/currency">
+          <v-list-item-action>
+            <v-icon>mdi mdi-currency-usd</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Валюта</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
 
       <template v-slot:append>
