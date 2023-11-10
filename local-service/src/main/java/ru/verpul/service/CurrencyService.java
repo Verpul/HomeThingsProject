@@ -12,6 +12,7 @@ import ru.verpul.mapper.CurrencyMapper;
 import ru.verpul.model.Currency;
 import ru.verpul.repository.CurrencyRepository;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +30,12 @@ public class CurrencyService {
     }
 
     public List<CurrencyDTO> getCurrencyRecords() {
-        return currencyRepository.findAll().stream()
+        List<CurrencyDTO> currencyRecords = currencyRepository.findAllAndSortByDate().stream()
                 .map(currencyMapper::currencyToCurrencyDTO)
                 .collect(Collectors.toList());
+        Collections.reverse(currencyRecords);
+
+        return currencyRecords;
     }
 
     public void updateCurrencyRecord(CurrencyDTO currencyDTO, Long id) {
@@ -66,20 +70,28 @@ public class CurrencyService {
     }
 
     private void calculateCurrencyAmountAndRublesSpentAndEarned(Map<CurrencyType, CurrencyAmountDTO> currencyAmountMap) {
-        List<Currency> allCurrencyRecords = currencyRepository.findAll();
+        List<Currency> allCurrencyRecords = currencyRepository.findAllAndSortByDate();
 
         for (Currency currencyRecord : allCurrencyRecords) {
-            CurrencyAmountDTO recordToChange = currencyAmountMap.get(currencyRecord.getCurrencyFrom());
-            recordToChange.setAmount(recordToChange.getAmount() - currencyRecord.getCurrencyFromAmount());
+            CurrencyAmountDTO recordToChangeFrom = currencyAmountMap.get(currencyRecord.getCurrencyFrom());
+            CurrencyAmountDTO recordToChangeTo = currencyAmountMap.get(currencyRecord.getCurrencyTo());
+
+            if (currencyRecord.getCurrencyFrom() != CurrencyType.RUB && currencyRecord.getCurrencyTo() != CurrencyType.RUB) {
+                double averageRate = recordToChangeFrom.getRublesSpentOn() / recordToChangeFrom.getAmount();
+                double sumToExchange = currencyRecord.getCurrencyFromAmount() * averageRate;
+
+                recordToChangeFrom.setRublesSpentOn(recordToChangeFrom.getRublesSpentOn() - sumToExchange);
+                recordToChangeTo.setRublesSpentOn(recordToChangeTo.getRublesSpentOn() + sumToExchange);
+            }
+
+            recordToChangeFrom.setAmount(recordToChangeFrom.getAmount() - currencyRecord.getCurrencyFromAmount());
+            recordToChangeTo.setAmount(recordToChangeTo.getAmount() + currencyRecord.getCurrencyToAmount());
 
             if (currencyRecord.getCurrencyTo() == CurrencyType.RUB)
-                recordToChange.setRublesEarnedFrom(recordToChange.getRublesEarnedFrom() + currencyRecord.getCurrencyToAmount());
-
-            recordToChange = currencyAmountMap.get(currencyRecord.getCurrencyTo());
-            recordToChange.setAmount(recordToChange.getAmount() + currencyRecord.getCurrencyToAmount());
+                recordToChangeFrom.setRublesEarnedFrom(recordToChangeFrom.getRublesEarnedFrom() + currencyRecord.getCurrencyToAmount());
 
             if (currencyRecord.getCurrencyFrom() == CurrencyType.RUB)
-                recordToChange.setRublesSpentOn(recordToChange.getRublesSpentOn() + currencyRecord.getCurrencyFromAmount());
+                recordToChangeTo.setRublesSpentOn(recordToChangeTo.getRublesSpentOn() + currencyRecord.getCurrencyFromAmount());
         }
     }
 
@@ -94,49 +106,4 @@ public class CurrencyService {
             currencyAmountToChange.setDifference(currencyAmountToChange.getSellPrice() - currencyAmountToChange.getRublesSpentOn());
         }
     }
-
-//    public CurrencyAmountDTO calculateCurrency() {
-//        List<Currency> allCurrencyRecords = currencyRepository.findAll();
-//        CurrencyAmountDTO currencyAmount = new CurrencyAmountDTO();
-//
-//        for (CurrencyType type: CurrencyType.values()) {
-//            countCurrencyAmount();
-//        }
-//
-//        return currencyAmount;
-//    }
-//
-//    private void countCurrencyAmount(CurrencyType type, CurrencyAmountDTO currencyAmount, List<Currency> currencyRecords) {
-//        double amount = currencyRecords.stream()
-//                .filter(record -> record.getCurrencyTo() == type || record.getCurrencyFrom() == type)
-//                .mapToDouble(record -> record.getCurrencyTo() == type ? record.getCurrencyToAmount() : -record.getCurrencyFromAmount())
-//                .sum();
-//
-//        Map<String, Double> currencyOverallMap = currencyAmount.getCurrencyOverall();
-//        currencyOverallMap.put(type.toString(), amount);
-//    }
-//
-//    private void countRublesSpentOnCurrency(CurrencyType type, CurrencyAmountDTO currencyAmount, List<Currency> currencyRecords) {
-//        double amount = currencyRecords.stream()
-//                .filter(record -> record.getCurrencyFrom() == CurrencyType.RUB && record.getCurrencyTo() == type)
-//                .mapToDouble(Currency::getCurrencyFromAmount)
-//                .sum();
-//
-//        Map<String, Double> rublesSpent = currencyAmount.getRublesSpentOnCurrency();
-//        rublesSpent.put(type.toString(), amount);
-//    }
-//
-//    private void countRublesEarnedFromCurrency(CurrencyType type, CurrencyAmountDTO currencyAmount, List<Currency> currencyRecords) {
-//        double amount = currencyRecords.stream()
-//                .filter(record -> record.getCurrencyFrom() == type && record.getCurrencyTo() == CurrencyType.RUB)
-//                .mapToDouble(Currency::getCurrencyFromAmount)
-//                .sum();
-//
-//        Map<String, Double> rublesEarned = currencyAmount.getRublesEarnedFromCurrency();
-//        rublesEarned.put(type.toString(), amount);
-//    }
-//
-//    private void countSellPrice(CurrencyType type) {
-//
-//    }
 }

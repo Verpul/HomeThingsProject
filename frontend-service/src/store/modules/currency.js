@@ -23,12 +23,13 @@ const mutations = {
 const actions = {
   getCurrencyRecords({commit}) {
     axios.get(`${CURRENCY_API_URL}`).then((response) => {
-      commit('setCurrencyRecords', {data: response.data})
+      commit('setCurrencyRecords', {data: response.data});
     });
   },
   async saveCurrencyRecord({dispatch, commit}, data) {
     await axios.post(`${CURRENCY_API_URL}`, data).then(() => {
       dispatch('getCurrencyRecords');
+      dispatch('calculateCurrency');
     }).catch((errors) => {
       commit('setCurrencyRecordErrors', {errors: errors.response.data})
     })
@@ -36,6 +37,7 @@ const actions = {
   async updateCurrencyRecord({dispatch, commit}, data) {
     await axios.put(`${CURRENCY_API_URL}/${data.id}`, data).then(() => {
       dispatch('getCurrencyRecords');
+      dispatch('calculateCurrency');
     }).catch((errors) => {
       commit('setCurrencyRecordErrors', {errors: errors.response.data})
     })
@@ -43,6 +45,7 @@ const actions = {
   deleteCurrencyRecord({dispatch}, id) {
     axios.delete(`${CURRENCY_API_URL}/${id}`).then(() => {
       dispatch('getCurrencyRecords');
+      dispatch('calculateCurrency');
     })
   },
   calculateCurrency({commit}) {
