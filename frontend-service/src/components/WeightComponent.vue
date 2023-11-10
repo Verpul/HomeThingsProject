@@ -23,7 +23,6 @@
               </thead>
               <tbody>
               <tr>
-
                 <td style="vertical-align: top">
                   <v-text-field type="date" density="compact" variant="underlined" v-model="weightRecordDate"
                                 :error-messages="weightRecordsErrors.weightRecordDate"></v-text-field>
@@ -63,7 +62,6 @@
                     </v-menu>
                   </div>
                 </td>
-
               </tr>
               <tr
                   v-for="(record) in weightRecords"

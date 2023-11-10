@@ -4,6 +4,8 @@ import reminder from './modules/reminder'
 import reminderCategory from "@/store/modules/reminderCategory";
 import weight from "@/store/modules/weight";
 import twitch from "@/store/modules/twitch";
+import currencyRates from "@/store/modules/currencyRates";
+import currency from "@/store/modules/currency";
 
 Vue.use(Vuex)
 
@@ -12,6 +14,8 @@ export default new Vuex.Store({
     reminder,
     reminderCategory,
     weight,
-    twitch
+    twitch,
+    currencyRates,
+    currency
   }
 })
