@@ -33,6 +33,10 @@ const routes = [
     path: '/currency',
     name: 'Currency Component',
     component: CurrencyComponent
+  },
+  {
+    path: '/:catchAll(.*)',
+    redirect: '/'
   }
 ]
 

@@ -144,27 +144,18 @@
 </template>
 
 <script>
-import WeatherService from "@/service/WeatherService";
 import CurrencyRateComponent from "@/components/CurrencyRateComponent";
 
 export default {
   name: "WeatherComponent",
   data() {
     return {
-      weatherData: {},
       hourlyInfoModal: false,
       hourlyInfoDate: "",
       hourlyInfoData: [],
-      weatherNow: null,
     }
   },
   methods: {
-    loadData() {
-      WeatherService.getWeatherData().then((res) => {
-        this.weatherData = res.data;
-        this.weatherNow = this.weatherData.shortIntervals[0];
-      });
-    },
     showHourlyInfo(date) {
       if (this.haveHourlyInfo(date)) {
         this.hourlyInfoDate = date;
@@ -179,8 +170,16 @@ export default {
       return temperature > 0 ? 'red--text text--darken-2' : 'blue--text text--darken-3';
     }
   },
+  computed: {
+    weatherData() {
+      return this.$store.getters.weatherData;
+    },
+    weatherNow() {
+      return this.$store.getters.weatherData.shortIntervals[0];
+    }
+  },
   created() {
-    this.loadData()
+    this.$store.dispatch('getWeatherData');
   },
   components: {
     CurrencyRateComponent
