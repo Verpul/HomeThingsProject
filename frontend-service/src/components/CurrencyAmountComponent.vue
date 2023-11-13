@@ -32,12 +32,12 @@
           <td>{{ currencyAmountData.EUR.difference }}</td>
         </tr>
         <tr>
-          <td></td>
+          <td>Всего</td>
           <td>{{ currencyAmountData.USD.amount + currencyAmountData.EUR.amount }}</td>
           <td>{{ currencyAmountData.USD.rublesSpentOn + currencyAmountData.EUR.rublesSpentOn }}</td>
           <td>{{ currencyAmountData.USD.rublesEarnedFrom + currencyAmountData.EUR.rublesEarnedFrom }}</td>
-          <td></td>
-          <td></td>
+          <td>{{ currencyAmountData.USD.sellPrice + currencyAmountData.EUR.sellPrice }}</td>
+          <td>{{ currencyAmountData.USD.difference + currencyAmountData.EUR.difference }}</td>
         </tr>
         </tbody>
       </v-simple-table>

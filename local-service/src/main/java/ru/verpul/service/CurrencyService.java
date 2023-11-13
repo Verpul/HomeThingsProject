@@ -12,6 +12,8 @@ import ru.verpul.mapper.CurrencyMapper;
 import ru.verpul.model.Currency;
 import ru.verpul.repository.CurrencyRepository;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +61,7 @@ public class CurrencyService {
     public Map<CurrencyType, CurrencyAmountDTO> calculateCurrency() {
         HashMap<CurrencyType, CurrencyAmountDTO> currencyAmountMap = new HashMap<>();
 
-        for (CurrencyType type: CurrencyType.values()) {
+        for (CurrencyType type : CurrencyType.values()) {
             currencyAmountMap.put(type, new CurrencyAmountDTO());
         }
 
@@ -76,22 +78,40 @@ public class CurrencyService {
             CurrencyAmountDTO recordToChangeFrom = currencyAmountMap.get(currencyRecord.getCurrencyFrom());
             CurrencyAmountDTO recordToChangeTo = currencyAmountMap.get(currencyRecord.getCurrencyTo());
 
-            if (currencyRecord.getCurrencyFrom() != CurrencyType.RUB && currencyRecord.getCurrencyTo() != CurrencyType.RUB) {
-                double averageRate = recordToChangeFrom.getRublesSpentOn() / recordToChangeFrom.getAmount();
-                double sumToExchange = currencyRecord.getCurrencyFromAmount() * averageRate;
+            BigDecimal currencyFromAmount = BigDecimal.valueOf(currencyRecord.getCurrencyFromAmount());
+            BigDecimal currencyToAmount = BigDecimal.valueOf(currencyRecord.getCurrencyToAmount());
 
-                recordToChangeFrom.setRublesSpentOn(recordToChangeFrom.getRublesSpentOn() - sumToExchange);
-                recordToChangeTo.setRublesSpentOn(recordToChangeTo.getRublesSpentOn() + sumToExchange);
+            if (currencyRecord.getCurrencyFrom() != CurrencyType.RUB && currencyRecord.getCurrencyTo() != CurrencyType.RUB) {
+                BigDecimal averageRate = recordToChangeFrom.getRublesSpentOn()
+                        .divide(recordToChangeFrom.getAmount(), RoundingMode.HALF_UP);
+                BigDecimal sumToExchange = currencyFromAmount.multiply(averageRate);
+
+                recordToChangeFrom.setRublesSpentOn(recordToChangeFrom.getRublesSpentOn()
+                        .subtract(sumToExchange)
+                        .setScale(2, RoundingMode.HALF_UP));
+
+                recordToChangeTo.setRublesSpentOn(recordToChangeTo.getRublesSpentOn()
+                        .add(sumToExchange)
+                        .setScale(2, RoundingMode.HALF_UP));
             }
 
-            recordToChangeFrom.setAmount(recordToChangeFrom.getAmount() - currencyRecord.getCurrencyFromAmount());
-            recordToChangeTo.setAmount(recordToChangeTo.getAmount() + currencyRecord.getCurrencyToAmount());
+            recordToChangeFrom.setAmount(recordToChangeFrom.getAmount()
+                    .subtract(currencyFromAmount)
+                    .setScale(2, RoundingMode.HALF_UP));
+
+            recordToChangeTo.setAmount(recordToChangeTo.getAmount()
+                    .add(currencyToAmount)
+                    .setScale(2, RoundingMode.HALF_UP));
 
             if (currencyRecord.getCurrencyTo() == CurrencyType.RUB)
-                recordToChangeFrom.setRublesEarnedFrom(recordToChangeFrom.getRublesEarnedFrom() + currencyRecord.getCurrencyToAmount());
+                recordToChangeFrom.setRublesEarnedFrom(recordToChangeFrom.getRublesEarnedFrom()
+                        .add(currencyToAmount)
+                        .setScale(2, RoundingMode.HALF_UP));
 
             if (currencyRecord.getCurrencyFrom() == CurrencyType.RUB)
-                recordToChangeTo.setRublesSpentOn(recordToChangeTo.getRublesSpentOn() + currencyRecord.getCurrencyFromAmount());
+                recordToChangeTo.setRublesSpentOn(recordToChangeTo.getRublesSpentOn()
+                        .add(currencyFromAmount)
+                        .setScale(2, RoundingMode.HALF_UP));
         }
     }
 
@@ -99,11 +119,16 @@ public class CurrencyService {
         TinkoffCurrencyRateDTO tinkoffCurrencyRateDTO = apiServiceFeign.getTinkoffCurrencyRates();
 
         for (CurrencyType type : tinkoffCurrencyRateDTO.getCurrenciesRate().keySet()) {
-            String sellPrice = tinkoffCurrencyRateDTO.getCurrenciesRate().get(type).get("sell");
-
+            double bankBuyPrice = Double.parseDouble(tinkoffCurrencyRateDTO.getCurrenciesRate().get(type).get("buy"));
             CurrencyAmountDTO currencyAmountToChange = currencyAmountMap.get(type);
-            currencyAmountToChange.setSellPrice(Double.parseDouble(sellPrice) * currencyAmountToChange.getAmount());
-            currencyAmountToChange.setDifference(currencyAmountToChange.getSellPrice() - currencyAmountToChange.getRublesSpentOn());
+
+            currencyAmountToChange.setSellPrice(BigDecimal.valueOf(bankBuyPrice)
+                    .multiply(currencyAmountToChange.getAmount())
+                    .setScale(2, RoundingMode.HALF_UP));
+
+            currencyAmountToChange.setDifference(currencyAmountToChange.getSellPrice()
+                    .subtract(currencyAmountToChange.getRublesSpentOn())
+                    .setScale(2, RoundingMode.HALF_UP));
         }
     }
 }
