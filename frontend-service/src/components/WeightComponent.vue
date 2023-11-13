@@ -6,7 +6,7 @@
         <v-card width="600px" class="mx-auto"
                 outlined>
           <v-form ref="form">
-            <v-simple-table class="ma-5">
+            <v-simple-table class="ma-5" height="700px">
               <thead>
               <tr>
                 <th class="text-left" style="width: 30%">

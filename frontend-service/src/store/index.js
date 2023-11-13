@@ -6,6 +6,7 @@ import weight from "@/store/modules/weight";
 import twitch from "@/store/modules/twitch";
 import currencyRates from "@/store/modules/currencyRates";
 import currency from "@/store/modules/currency";
+import weather from "@/store/modules/weather";
 
 Vue.use(Vuex)
 
@@ -16,6 +17,7 @@ export default new Vuex.Store({
     weight,
     twitch,
     currencyRates,
-    currency
+    currency,
+    weather
   }
 })
