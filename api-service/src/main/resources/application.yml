@@ -5,6 +5,19 @@ spring:
   application:
     name: api-service
 
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRES_API_DB:localhost}:${POSTGRES_API_DB_PORT:5433}/${POSTGRES_API_DB:homethings_api_db}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+  liquibase:
+    change-log: "classpath:db/changelog/changelog-master.xml"
+
 twitch:
   client-id: ${TWITCH_CLIENT_ID}
   client-secret: ${TWITCH_CLIENT_SECRET}

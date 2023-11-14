@@ -32,7 +32,7 @@ const actions = {
     })
   },
   loadFollowedChannels({commit}) {
-    axios.get(`${TWITCH_API_URL}/followed`).then((response) => {
+    axios.get(`${TWITCH_API_URL}/channel/follow`).then((response) => {
       commit('setFollowedChannels', {data: response.data});
     })
   },

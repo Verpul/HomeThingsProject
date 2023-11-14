@@ -1,0 +1,48 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet author="verpul" id="13.11.23-twitchTokenTable">
+        <createTable tableName="twitch_token">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="twitch_token_pkey"/>
+            </column>
+            <column name="access_token" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="refresh_token" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="verpul" id="13.11.23-twitchChannelTable">
+        <createTable tableName="twitch_channel">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="twitch_channel_pkey"/>
+            </column>
+            <column name="channel_id" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="channel_name" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="went_live_notification" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="changed_category_notification" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="verpul" id="13.11.23-twitchChannelTableChannelIdFieldUniqueConstraint">
+        <addUniqueConstraint columnNames="channel_id" constraintName="twitch_channel_channel_id_unique" tableName="twitch_channel"/>
+    </changeSet>
+
+    <changeSet author="verpul" id="13.11.23-twitchChannelTableChannelNameFieldUniqueConstraint">
+        <addUniqueConstraint columnNames="channel_name" constraintName="twitch_channel_channel_name_unique" tableName="twitch_channel"/>
+    </changeSet>
+
+</databaseChangeLog>
