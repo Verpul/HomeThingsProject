@@ -12,9 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.verpul.DTO.TwitchChannelDTO;
 import ru.verpul.DTO.TwitchTokenDTO;
-import ru.verpul.enums.TwitchEvent;
-import ru.verpul.feign.LocalServiceFeign;
 import ru.verpul.feign.TGBotFeign;
+import ru.verpul.model.TwitchToken;
+import ru.verpul.service.TwitchAuthService;
+import ru.verpul.service.TwitchChannelService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,13 +29,14 @@ public class TwitchClientComponent {
     private TwitchClient twitchClient;
 
     private final TGBotFeign tgBotFeign;
-    private final LocalServiceFeign localServiceFeign;
+    private final TwitchAuthService twitchAuthService;
+    private final TwitchChannelService twitchChannelService;
 
     public void start() {
         if (this.twitchClient != null) twitchClient.close();
 
         try {
-            TwitchTokenDTO accessToken = localServiceFeign.getTwitchToken();
+            TwitchToken accessToken = twitchAuthService.getTwitchToken();
             OAuth2Credential credential = new OAuth2Credential("twitch", accessToken.getAccessToken());
 
             twitchClient = TwitchClientBuilder.builder()
@@ -43,7 +45,7 @@ public class TwitchClientComponent {
                     .build();
 
 
-            List<TwitchChannelDTO> savedChannels = localServiceFeign.getTwitchChannels();
+            List<TwitchChannelDTO> savedChannels = twitchChannelService.getSavedTwitchChannels();
             List<String> savedChannelsNames = savedChannels.stream()
                     .map(TwitchChannelDTO::getChannelName)
                     .collect(Collectors.toList());

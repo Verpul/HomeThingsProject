@@ -8,5 +8,6 @@
     <include file="002-db.changelog-reminder-tables.xml" relativeToChangelogFile="true"/>
     <include file="003-db.changelog-twitch-tables.xml" relativeToChangelogFile="true"/>
     <include file="004-db.changelog-currency-table.xml" relativeToChangelogFile="true"/>
+    <include file="005-db.changelog-twitch-tables-drop.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

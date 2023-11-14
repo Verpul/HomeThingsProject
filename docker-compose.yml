@@ -15,6 +15,20 @@ services:
     volumes:
       - homethings-data:/var/lib/postgresql/data
 
+  homethings-api-db:
+    image: postgres:14.1-alpine
+    container_name: homethings-api-db
+    restart: always
+    environment:
+      POSTGRES_DB: homethings_api_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      TZ: ${TIMEZONE}
+    ports:
+      - "5433"
+    volumes:
+      - homethings-api-data:/var/lib/postgresql/data
+
   frontend:
     image: verpul/homethings:frontend
     container_name: frontend
@@ -91,6 +105,8 @@ services:
       SENTRY_DSN: ${SENTRY_DSN}
     ports:
       - "8082"
+    depends_on:
+      - homethings-api-db
 
   tg-bot-service:
     image: verpul/homethings:tg-bot-service
@@ -110,3 +126,4 @@ services:
 
 volumes:
   homethings-data:
+  homethings-api-data:
