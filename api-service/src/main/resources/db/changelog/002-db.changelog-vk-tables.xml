@@ -1,0 +1,49 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet author="verpul" id="15.11.23-vkTokenTable">
+        <createTable tableName="vk_token">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="vk_token_pkey"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="access_token" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="verpul" id="15.11.23-vkNewsDateTable">
+        <createTable tableName="vk_news_date">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="vk_news_date_pkey"/>
+            </column>
+            <column name="begin_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="begin_time" type="TIME">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="verpul" id="15.11.23-vkNewsFilterTable">
+        <createTable tableName="vk_news_filter">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="vk_news_filter_pkey"/>
+            </column>
+            <column name="filter" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="verpul" id="15.11.23-vkNewsFilterTableFilterFieldUniqueConstraint">
+        <addUniqueConstraint columnNames="filter" constraintName="filter_table_filter_unique" tableName="vk_news_filter"/>
+    </changeSet>
+
+</databaseChangeLog>

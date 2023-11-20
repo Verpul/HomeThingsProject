@@ -38,6 +38,7 @@
         <opencsv.version>5.7.1</opencsv.version>
         <twithc4j.version>1.16.0</twithc4j.version>
         <sentry.version>6.26.0</sentry.version>
+        <vk.sdk.version>1.0.15</vk.sdk.version>
     </properties>
 
     <dependencies>
@@ -76,6 +77,11 @@
                 <groupId>com.github.twitch4j</groupId>
                 <artifactId>twitch4j</artifactId>
                 <version>${twithc4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.vk.api</groupId>
+                <artifactId>sdk</artifactId>
+                <version>${vk.sdk.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
