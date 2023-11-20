@@ -175,7 +175,8 @@ export default {
       return this.$store.getters.weatherData;
     },
     weatherNow() {
-      return this.$store.getters.weatherData.shortIntervals[0];
+      const shortIntervals = this.$store.getters.weatherData;
+      return shortIntervals.length === 0 ? null : this.$store.getters.weatherData.shortIntervals[0];
     }
   },
   created() {
