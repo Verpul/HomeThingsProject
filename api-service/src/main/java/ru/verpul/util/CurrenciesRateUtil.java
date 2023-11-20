@@ -7,7 +7,7 @@ public class CurrenciesRateUtil {
 
     public static String convertMillisToDateTime(Long millis) {
         String localDateTime = OffsetDateTime.ofInstant(Instant.ofEpochMilli(millis),
-                ZoneId.systemDefault()).format(DateTimeFormatter.ISO_DATE_TIME);
+                ZoneId.systemDefault()).withNano(0).format(DateTimeFormatter.ISO_DATE_TIME);
 
         return CommonUtil.getFormattedUpdateDate(localDateTime);
     }
