@@ -47,6 +47,14 @@
             <v-list-item-title>Валюта</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item to="/vk">
+          <v-list-item-action>
+            <v-icon>mdi mdi-newspaper-variant-outline</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>VK</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
 
       <template v-slot:append>

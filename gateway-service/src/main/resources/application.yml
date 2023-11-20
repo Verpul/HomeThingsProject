@@ -22,7 +22,7 @@ spring:
         - id: api-service
           uri: http://api-service:8082
           predicates:
-            - Path=/api/weather, /api/rates/**, /api/twitch/**
+            - Path=/api/weather, /api/rates/**, /api/twitch/**, /api/vk/**
 
   security:
     oauth2:

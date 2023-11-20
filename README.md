@@ -38,6 +38,7 @@ npm run serve
 - Курс валют ЦБ - https://www.cbr.ru/currency_base/daily/
 - Курс валют Тинькофф - https://www.tinkoff.ru/about/exchange/
 - Twitch - https://www.twitch.tv/
+- VK - https://vk.com/
 
 #### Enviroment variables:
 - TWITCH_CLIENT_ID 
