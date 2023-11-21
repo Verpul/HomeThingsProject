@@ -4,19 +4,37 @@
     <v-main>
       <v-container fluid>
         <v-card width="1100" class="mx-auto" flat>
-              <CurrencyRateComponent />
-              <CurrencyCountComponent />
+          <CurrencyRateComponent/>
+          <CurrencyCountComponent/>
           <v-simple-table class="mt-3">
             <thead>
-              <tr>
-                <th style="width: 15%">Дата обмена</th>
-                <th style="width: 15%">Валюта из</th>
-                <th style="width: 15%">Количество</th>
-                <th style="width: 15%">Валюта в</th>
-                <th style="width: 15%">Количество</th>
-                <th style="width: 10%">Курс</th>
-                <th style="width: 15%"></th>
-              </tr>
+            <tr>
+              <th style="width: 15%">Дата обмена</th>
+              <th style="width: 15%">Валюта из</th>
+              <th style="width: 15%">Количество</th>
+              <th style="width: 15%">Валюта в</th>
+              <th style="width: 15%">Количество</th>
+              <th style="width: 10%">Курс</th>
+              <th style="width: 15%">
+                <v-menu bottom left offset-y>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn density="compact" icon
+                           v-bind="attrs"
+                           v-on="on">
+                      <v-icon color="primary">mdi mdi-cog</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list>
+                    <v-list-item
+                        link
+                        @click="downloadXLS"
+                    >
+                      <v-list-item-title class="text-body-2">Скачать данные в .xlsx</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </th>
+            </tr>
             </thead>
             <tbody>
             <tr>
@@ -26,28 +44,35 @@
               </td>
               <td>
                 <v-select dense :items="currencies" v-model="record.currencyFrom"
-                          :error-messages="currencyRecordErrors.currencyFrom">></v-select>
+                          :error-messages="currencyRecordErrors.currencyFrom">>
+                </v-select>
               </td>
               <td>
                 <v-text-field dense type="number" v-model="record.currencyFromAmount"
-                              :error-messages="currencyRecordErrors.currencyFromAmount">></v-text-field>
+                              :error-messages="currencyRecordErrors.currencyFromAmount">>
+                </v-text-field>
               </td>
               <td>
                 <v-select dense :items="currencies" v-model="record.currencyTo"
-                          :error-messages="currencyRecordErrors.currencyTo">></v-select>
+                          :error-messages="currencyRecordErrors.currencyTo">>
+                </v-select>
               </td>
               <td>
                 <v-text-field dense type="number" v-model="record.currencyToAmount"
-                              :error-messages="currencyRecordErrors.currencyToAmount">></v-text-field>
+                              :error-messages="currencyRecordErrors.currencyToAmount">>
+                </v-text-field>
               </td>
               <td>
                 <v-text-field dense type="number" v-model="record.rate"
-                              :error-messages="currencyRecordErrors.rate">></v-text-field>
+                              :error-messages="currencyRecordErrors.rate">>
+                </v-text-field>
               </td>
               <td>
                 <div class="d-inline-block" style="white-space: nowrap">
                   <v-btn density="compact" icon @click="saveRecord()">
-                    <v-icon color="success">{{ record.id ? 'mdi mdi-check-circle-outline' : 'mdi mdi-plus-box-outline' }}
+                    <v-icon color="success">{{
+                        record.id ? 'mdi mdi-check-circle-outline' : 'mdi mdi-plus-box-outline'
+                      }}
                     </v-icon>
                   </v-btn>
                   <v-btn density="compact" @click="clearFields" v-if="record.id"
@@ -149,6 +174,9 @@ export default {
     deleteRecord(recordId) {
       this.$store.dispatch('deleteCurrencyRecord', recordId);
       this.clearFields();
+    },
+    downloadXLS() {
+      this.$store.dispatch('downloadCurrencyRecordsXLS');
     }
   },
   computed: {

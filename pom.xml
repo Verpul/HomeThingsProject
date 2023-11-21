@@ -39,6 +39,7 @@
         <twithc4j.version>1.16.0</twithc4j.version>
         <sentry.version>6.26.0</sentry.version>
         <vk.sdk.version>1.0.15</vk.sdk.version>
+        <apache.poi.version>5.2.4</apache.poi.version>
     </properties>
 
     <dependencies>
@@ -52,6 +53,7 @@
             <artifactId>sentry-logback</artifactId>
             <version>${sentry.version}</version>
         </dependency>
+
     </dependencies>
 
     <dependencyManagement>
@@ -82,6 +84,16 @@
                 <groupId>com.vk.api</groupId>
                 <artifactId>sdk</artifactId>
                 <version>${vk.sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>${apache.poi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${apache.poi.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -1,6 +1,10 @@
 package ru.verpul.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import ru.verpul.DTO.CurrencyAmountDTO;
 import ru.verpul.DTO.CurrencyDTO;
@@ -12,6 +16,8 @@ import ru.verpul.mapper.CurrencyMapper;
 import ru.verpul.model.Currency;
 import ru.verpul.repository.CurrencyRepository;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collections;
@@ -22,6 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CurrencyService {
     private final CurrencyMapper currencyMapper;
     private final CurrencyRepository currencyRepository;
@@ -130,5 +137,73 @@ public class CurrencyService {
                     .subtract(currencyAmountToChange.getRublesSpentOn())
                     .setScale(2, RoundingMode.HALF_UP));
         }
+    }
+
+    public ByteArrayOutputStream getXLSFile() {
+        List<Currency> currencyList = currencyRepository.findAllAndSortByDate();
+        List<String> headers = List.of("Дата обмена", "Валюта из", "Количество", "Валюта в", "Количество", "Курс");
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFSheet sheet = workbook.createSheet("Currency data");
+
+            for (int i = 0; i < headers.size(); i++) {
+                sheet.setColumnWidth(i, 15 * 256);
+            }
+
+            CreationHelper creationHelper = workbook.getCreationHelper();
+            short dateFormat = creationHelper.createDataFormat().getFormat("dd.mm.yyyy");
+            CellStyle dateStyle = workbook.createCellStyle();
+            dateStyle.setDataFormat(dateFormat);
+            setCellBorderStyle(dateStyle, BorderStyle.THIN);
+
+            CellStyle headerStyle = workbook.createCellStyle();
+            setCellBorderStyle(headerStyle, BorderStyle.MEDIUM);
+            headerStyle.setFillForegroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+            CellStyle borderStyle = workbook.createCellStyle();
+            setCellBorderStyle(borderStyle, BorderStyle.THIN);
+
+            int rowNum = 0;
+            int cellNum = 0;
+            Row row = sheet.createRow(rowNum++);
+
+            for (String header : headers) {
+                createCellAndApplyStyle(row, cellNum++, headerStyle).setCellValue(header);
+            }
+
+            for (Currency record : currencyList) {
+                row = sheet.createRow(rowNum++);
+                cellNum = 0;
+
+                createCellAndApplyStyle(row, cellNum++, dateStyle).setCellValue(record.getExchangeDate());
+                createCellAndApplyStyle(row, cellNum++, borderStyle).setCellValue(record.getCurrencyFrom().toString());
+                createCellAndApplyStyle(row, cellNum++, borderStyle).setCellValue(record.getCurrencyFromAmount());
+                createCellAndApplyStyle(row, cellNum++, borderStyle).setCellValue(record.getCurrencyTo().toString());
+                createCellAndApplyStyle(row, cellNum++, borderStyle).setCellValue(record.getCurrencyToAmount());
+                createCellAndApplyStyle(row, cellNum, borderStyle).setCellValue(record.getRate());
+            }
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            workbook.write(byteArrayOutputStream);
+            return byteArrayOutputStream;
+        } catch (IOException e) {
+            log.error("Ошибка при формировании xls файла", e);
+        }
+
+        return null;
+    }
+
+    private Cell createCellAndApplyStyle(Row row, int cellNum, CellStyle cellStyle) {
+        Cell cell = row.createCell(cellNum);
+        cell.setCellStyle(cellStyle);
+        return cell;
+    }
+
+    private void setCellBorderStyle(CellStyle cellStyle, BorderStyle borderStyle) {
+        cellStyle.setBorderBottom(borderStyle);
+        cellStyle.setBorderTop(borderStyle);
+        cellStyle.setBorderLeft(borderStyle);
+        cellStyle.setBorderRight(borderStyle);
     }
 }
