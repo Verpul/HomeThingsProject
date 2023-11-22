@@ -61,13 +61,13 @@ public class WeightRecordController {
         weightRecordService.handleFileData(file);
     }
 
-    @GetMapping("/download")
-    public ResponseEntity<ByteArrayResource> downloadWeightRecords() {
-        ByteArrayOutputStream stream = weightRecordService.downloadFile("XLS");
+    @GetMapping("/download/{type}")
+    public ResponseEntity<ByteArrayResource> downloadWeightRecords(@PathVariable String type) {
+        ByteArrayOutputStream stream = weightRecordService.downloadFile(type);
 
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        header.setContentDisposition(ContentDisposition.attachment().filename("WeightRecords.xlsx").build());
+//        header.setContentDisposition(ContentDisposition.attachment().filename("WeightRecords." + type).build());
 
         return new ResponseEntity<>(new ByteArrayResource(stream.toByteArray()), header, HttpStatus.OK);
     }

@@ -26,9 +26,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -41,6 +40,10 @@ public class WeightRecordService {
 
     public static final String VALID_DATE_REGEX = "^(0[1-9]|1\\d|2\\d|3[01])\\.(0[1-9]|1[0-2])\\.\\d{2}$";
     public static final String VALID_WEIGHT_VALUE_REGEX = "^(([5-9]\\d(\\.\\d)?)|(^\\s*))$";
+    public static final String WEIGHT_RECORD_DATE_COLUMN_TITLE = "Дата взвешивания";
+    public static final String WEIGHT_RECORD_VALUE_COLUMN_TITLE = "Вес";
+    public static final String WEIGHT_RECORD_DIFFERENCE_COLUMN_TITLE = "Разница";
+    public static final String WEIGHT_RECORDS_TABLE_TITLE = "Weight records";
 
     private final WeightRecordRepository weightRecordRepository;
     private final WeightRecordMapper weightRecordMapper;
@@ -159,15 +162,22 @@ public class WeightRecordService {
     }
 
     public ByteArrayOutputStream downloadFile(String type) {
-        return getPDFFile();
+        switch (type.toLowerCase()) {
+            case "docx":
+                return getDOCXFile();
+            case "pdf":
+                return getPDFFile();
+            default:
+                return getXLSFile();
+        }
     }
 
     public ByteArrayOutputStream getXLSFile() {
         List<WeightRecord> weightRecordsList = weightRecordRepository.findAllOrderByWeightDate();
 
         try (XSSFWorkbook workbook = new XSSFWorkbook()){
-            List<String> headers = List.of("Дата взвешивания", "Вес", "Разница");
-            XSSFSheet sheet = ApachePOIUtil.getNewXLSSheet(workbook, "Взвешивания", headers, 15);
+            List<String> headers = List.of(WEIGHT_RECORD_DATE_COLUMN_TITLE, WEIGHT_RECORD_VALUE_COLUMN_TITLE, WEIGHT_RECORD_DIFFERENCE_COLUMN_TITLE);
+            XSSFSheet sheet = ApachePOIUtil.getNewXLSSheet(workbook, WEIGHT_RECORDS_TABLE_TITLE, headers, 15);
 
             int rowNum = 0;
             int cellNum = 0;
@@ -203,14 +213,14 @@ public class WeightRecordService {
         return null;
     }
 
-    public ByteArrayOutputStream getDOCFile() {
+    public ByteArrayOutputStream getDOCXFile() {
         List<WeightRecord> weightRecordsList = weightRecordRepository.findAllOrderByWeightDate();
 
         try (XWPFDocument document = new XWPFDocument()) {
             XWPFParagraph paragraph = document.createParagraph();
             XWPFRun run = paragraph.createRun();
             run.setFontSize(14);
-            run.setText("Weight records");
+            run.setText(WEIGHT_RECORDS_TABLE_TITLE);
 
             XWPFTable table = document.createTable(weightRecordsList.size() + 1, 2);
             int rowNum = 0;
@@ -218,9 +228,9 @@ public class WeightRecordService {
 
             XWPFTableRow row = table.getRow(rowNum++);
             XWPFTableCell cell = row.getCell(cellNum++);
-            cell.setText("Дата взвешивания");
+            cell.setText(WEIGHT_RECORD_DATE_COLUMN_TITLE);
             cell = row.getCell(cellNum);
-            cell.setText("Вес");
+            cell.setText(WEIGHT_RECORD_VALUE_COLUMN_TITLE);
 
             for (WeightRecord record : weightRecordsList) {
                 cellNum = 0;
@@ -251,14 +261,14 @@ public class WeightRecordService {
 
             document.open();
 
-            Paragraph paragraph = new Paragraph("Weight records");
+            Paragraph paragraph = new Paragraph(WEIGHT_RECORDS_TABLE_TITLE);
             paragraph.setAlignment(Element.ALIGN_CENTER);
             paragraph.setSpacingAfter(10);
             document.add(paragraph);
 
             PdfPTable table = new PdfPTable(columnsNum);
-            table.addCell("Дата взвешивания");
-            table.addCell("Вес");
+            table.addCell(WEIGHT_RECORD_DATE_COLUMN_TITLE);
+            table.addCell(WEIGHT_RECORD_VALUE_COLUMN_TITLE);
 
             for (WeightRecord record : weightRecordsList) {
                 table.addCell(record.getWeightRecordDate().toString());

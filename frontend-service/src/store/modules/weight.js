@@ -51,6 +51,20 @@ const actions = {
     }).catch((error) => {
       commit('setFileUploadError', {error: error.response.data})
     })
+  },
+  downloadWeightRecordsData(context, type) {
+    axios.get(`${WEIGHT_API_URL}/download/${type}`, {
+      responseType: 'blob'
+    }).then((response) => {
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(
+          new Blob([response.data])
+      );
+
+      link.setAttribute('download', 'WeightRecords.' + type);
+      document.body.appendChild(link);
+      link.click();
+    });
   }
 }
 
