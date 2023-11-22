@@ -2,6 +2,11 @@ package ru.verpul.service;
 
 import com.opencsv.CSVReader;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,7 +16,10 @@ import ru.verpul.exception.FileValidationException;
 import ru.verpul.mapper.WeightRecordMapper;
 import ru.verpul.model.WeightRecord;
 import ru.verpul.repository.WeightRecordRepository;
+import ru.verpul.util.ApachePOIUtil;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -21,8 +29,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static ru.verpul.util.ApachePOIUtil.*;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class WeightRecordService {
 
     public static final String VALID_DATE_REGEX = "^(0[1-9]|1\\d|2\\d|3[01])\\.(0[1-9]|1[0-2])\\.\\d{2}$";
@@ -142,6 +153,59 @@ public class WeightRecordService {
                 .collect(Collectors.toList());
 
         weightRecordRepository.saveAll(recordsToSave);
+    }
+
+    public ByteArrayOutputStream downloadFile(String type) {
+        return getXLSFile();
+    }
+
+    public ByteArrayOutputStream getXLSFile() {
+        List<WeightRecord> weightRecordsList = weightRecordRepository.findAllOrderByWeightDate();
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook()){
+            List<String> headers = List.of("Дата взвешивания", "Вес", "Разница");
+            XSSFSheet sheet = ApachePOIUtil.getNewXLSSheet(workbook, "Взвешивания", headers, 15);
+
+            int rowNum = 0;
+            int cellNum = 0;
+            Row row = sheet.createRow(rowNum++);
+
+            for (String header : headers) {
+                createCellAndApplyStyle(row, cellNum++, getHeaderStyle(workbook)).setCellValue(header);
+            }
+
+            for (WeightRecord record : weightRecordsList) {
+                row = sheet.createRow(rowNum++);
+                cellNum = 0;
+
+                createCellAndApplyStyle(row, cellNum++, getDateCellStyle(workbook)).setCellValue(record.getWeightRecordDate());
+                createCellAndApplyStyle(row, cellNum++, getBorderedCellStyle(workbook)).setCellValue(record.getWeightRecordValue()
+                        .replace('.', ','));
+
+                String formula = "B" + rowNum;
+                if (rowNum != 2) {
+                    formula += "-B" + (rowNum - 1);
+                }
+                createCellAndApplyStyle(row, cellNum, getBorderedCellStyle(workbook)).setCellFormula(formula);
+            }
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            workbook.write(byteArrayOutputStream);
+            return byteArrayOutputStream;
+
+        } catch (IOException e) {
+            log.error("Ошибка при формировании xls файла", e);
+        }
+
+        return null;
+    }
+
+    public void getDOCFile() {
+
+    }
+
+    public void getPDFFile() {
+
     }
 }
 
