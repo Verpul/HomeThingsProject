@@ -52,6 +52,20 @@ const actions = {
     axios.get(`${CURRENCY_API_URL}/calculate`).then((response) => {
       commit('setCurrencyAmountData', {data: response.data})
     })
+  },
+  downloadCurrencyRecordsXLS() {
+    axios.get(`${CURRENCY_API_URL}/xls`, {
+      responseType: 'blob'
+    }).then((response) => {
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(
+          new Blob([response.data])
+      );
+
+      link.setAttribute('download', 'CurrencyRecords.xlsx');
+      document.body.appendChild(link);
+      link.click();
+    });
   }
 }
 

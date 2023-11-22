@@ -58,6 +58,24 @@
                         >
                           <v-list-item-title class="text-body-2">Загрузить данные из CSV</v-list-item-title>
                         </v-list-item>
+                        <v-list-item
+                            link
+                            @click="downloadData('xlsx')"
+                        >
+                          <v-list-item-title class="text-body-2">Скачать данные в .xlsx</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item
+                            link
+                            @click="downloadData('docx')"
+                        >
+                          <v-list-item-title class="text-body-2">Скачать данные в .docx</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item
+                            link
+                            @click="downloadData('pdf')"
+                        >
+                          <v-list-item-title class="text-body-2">Скачать данные в .pdf</v-list-item-title>
+                        </v-list-item>
                       </v-list>
                     </v-menu>
                   </div>
@@ -144,6 +162,9 @@ export default {
     },
     showWeightLoadCSVDialog() {
       this.weightLoadCSVDataDialog = !this.weightLoadCSVDataDialog;
+    },
+    downloadData(type) {
+      this.$store.dispatch('downloadWeightRecordsData', type);
     }
   },
   computed: {

@@ -1,6 +1,10 @@
 package ru.verpul.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import ru.verpul.DTO.CurrencyAmountDTO;
 import ru.verpul.DTO.CurrencyDTO;
@@ -11,7 +15,10 @@ import ru.verpul.feign.ApiServiceFeign;
 import ru.verpul.mapper.CurrencyMapper;
 import ru.verpul.model.Currency;
 import ru.verpul.repository.CurrencyRepository;
+import ru.verpul.util.ApachePOIUtil;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collections;
@@ -20,8 +27,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static ru.verpul.util.ApachePOIUtil.*;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CurrencyService {
     private final CurrencyMapper currencyMapper;
     private final CurrencyRepository currencyRepository;
@@ -130,5 +140,42 @@ public class CurrencyService {
                     .subtract(currencyAmountToChange.getRublesSpentOn())
                     .setScale(2, RoundingMode.HALF_UP));
         }
+    }
+
+    public ByteArrayOutputStream getXLSFile() {
+        List<Currency> currencyList = currencyRepository.findAllAndSortByDate();
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            List<String> headers = List.of("Дата обмена", "Валюта из", "Количество", "Валюта в", "Количество", "Курс");
+            XSSFSheet sheet = ApachePOIUtil.getNewXLSSheet(workbook, "Currency data", headers, 15);
+
+            int rowNum = 0;
+            int cellNum = 0;
+            Row row = sheet.createRow(rowNum++);
+
+            for (String header : headers) {
+                createCellAndApplyStyle(row, cellNum++, getHeaderStyle(workbook)).setCellValue(header);
+            }
+
+            for (Currency record : currencyList) {
+                row = sheet.createRow(rowNum++);
+                cellNum = 0;
+
+                createCellAndApplyStyle(row, cellNum++, getDateCellStyle(workbook)).setCellValue(record.getExchangeDate());
+                createCellAndApplyStyle(row, cellNum++, getBorderedCellStyle(workbook)).setCellValue(record.getCurrencyFrom().toString());
+                createCellAndApplyStyle(row, cellNum++, getBorderedCellStyle(workbook)).setCellValue(record.getCurrencyFromAmount());
+                createCellAndApplyStyle(row, cellNum++, getBorderedCellStyle(workbook)).setCellValue(record.getCurrencyTo().toString());
+                createCellAndApplyStyle(row, cellNum++, getBorderedCellStyle(workbook)).setCellValue(record.getCurrencyToAmount());
+                createCellAndApplyStyle(row, cellNum, getBorderedCellStyle(workbook)).setCellValue(record.getRate());
+            }
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            workbook.write(byteArrayOutputStream);
+            return byteArrayOutputStream;
+        } catch (IOException e) {
+            log.error("Ошибка при формировании xls файла", e);
+        }
+
+        return null;
     }
 }

@@ -1,7 +1,15 @@
 package ru.verpul.service;
 
+import com.lowagie.text.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.*;
 import com.opencsv.CSVReader;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xwpf.usermodel.*;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,22 +19,31 @@ import ru.verpul.exception.FileValidationException;
 import ru.verpul.mapper.WeightRecordMapper;
 import ru.verpul.model.WeightRecord;
 import ru.verpul.repository.WeightRecordRepository;
+import ru.verpul.util.ApachePOIUtil;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static ru.verpul.util.ApachePOIUtil.*;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class WeightRecordService {
 
     public static final String VALID_DATE_REGEX = "^(0[1-9]|1\\d|2\\d|3[01])\\.(0[1-9]|1[0-2])\\.\\d{2}$";
     public static final String VALID_WEIGHT_VALUE_REGEX = "^(([5-9]\\d(\\.\\d)?)|(^\\s*))$";
+    public static final String WEIGHT_RECORD_DATE_COLUMN_TITLE = "Дата взвешивания";
+    public static final String WEIGHT_RECORD_VALUE_COLUMN_TITLE = "Вес";
+    public static final String WEIGHT_RECORD_DIFFERENCE_COLUMN_TITLE = "Разница";
+    public static final String WEIGHT_RECORDS_TABLE_TITLE = "Weight records";
 
     private final WeightRecordRepository weightRecordRepository;
     private final WeightRecordMapper weightRecordMapper;
@@ -142,6 +159,126 @@ public class WeightRecordService {
                 .collect(Collectors.toList());
 
         weightRecordRepository.saveAll(recordsToSave);
+    }
+
+    public ByteArrayOutputStream downloadFile(String type) {
+        switch (type.toLowerCase()) {
+            case "docx":
+                return getDOCXFile();
+            case "pdf":
+                return getPDFFile();
+            default:
+                return getXLSFile();
+        }
+    }
+
+    public ByteArrayOutputStream getXLSFile() {
+        List<WeightRecord> weightRecordsList = weightRecordRepository.findAllOrderByWeightDate();
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook()){
+            List<String> headers = List.of(WEIGHT_RECORD_DATE_COLUMN_TITLE, WEIGHT_RECORD_VALUE_COLUMN_TITLE, WEIGHT_RECORD_DIFFERENCE_COLUMN_TITLE);
+            XSSFSheet sheet = ApachePOIUtil.getNewXLSSheet(workbook, WEIGHT_RECORDS_TABLE_TITLE, headers, 15);
+
+            int rowNum = 0;
+            int cellNum = 0;
+            Row row = sheet.createRow(rowNum++);
+
+            for (String header : headers) {
+                createCellAndApplyStyle(row, cellNum++, getHeaderStyle(workbook)).setCellValue(header);
+            }
+
+            for (WeightRecord record : weightRecordsList) {
+                row = sheet.createRow(rowNum++);
+                cellNum = 0;
+
+                createCellAndApplyStyle(row, cellNum++, getDateCellStyle(workbook)).setCellValue(record.getWeightRecordDate());
+                createCellAndApplyStyle(row, cellNum++, getBorderedCellStyle(workbook)).setCellValue(record.getWeightRecordValue()
+                        .replace('.', ','));
+
+                String formula = "B" + rowNum;
+                if (rowNum != 2) {
+                    formula += "-B" + (rowNum - 1);
+                }
+                createCellAndApplyStyle(row, cellNum, getBorderedCellStyle(workbook)).setCellFormula(formula);
+            }
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            workbook.write(byteArrayOutputStream);
+            return byteArrayOutputStream;
+
+        } catch (IOException e) {
+            log.error("Ошибка при формировании xls файла", e);
+        }
+
+        return null;
+    }
+
+    public ByteArrayOutputStream getDOCXFile() {
+        List<WeightRecord> weightRecordsList = weightRecordRepository.findAllOrderByWeightDate();
+
+        try (XWPFDocument document = new XWPFDocument()) {
+            XWPFParagraph paragraph = document.createParagraph();
+            XWPFRun run = paragraph.createRun();
+            run.setFontSize(14);
+            run.setText(WEIGHT_RECORDS_TABLE_TITLE);
+
+            XWPFTable table = document.createTable(weightRecordsList.size() + 1, 2);
+            int rowNum = 0;
+            int cellNum = 0;
+
+            XWPFTableRow row = table.getRow(rowNum++);
+            XWPFTableCell cell = row.getCell(cellNum++);
+            cell.setText(WEIGHT_RECORD_DATE_COLUMN_TITLE);
+            cell = row.getCell(cellNum);
+            cell.setText(WEIGHT_RECORD_VALUE_COLUMN_TITLE);
+
+            for (WeightRecord record : weightRecordsList) {
+                cellNum = 0;
+                row = table.getRow(rowNum++);
+
+                cell = row.getCell(cellNum++);
+                cell.setText(record.getWeightRecordDate().toString());
+                cell = row.getCell(cellNum);
+                cell.setText(record.getWeightRecordValue());
+            }
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            document.write(byteArrayOutputStream);
+            return byteArrayOutputStream;
+        } catch (IOException e) {
+            log.error("Ошибка при формировании doc файла", e);
+        }
+        return null;
+    }
+
+    public ByteArrayOutputStream getPDFFile() {
+        List<WeightRecord> weightRecordsList = weightRecordRepository.findAllOrderByWeightDate();
+
+        try (Document document = new Document(PageSize.A4)) {
+            final int columnsNum = 2;
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            PdfWriter.getInstance(document, byteArrayOutputStream);
+
+            document.open();
+
+            Paragraph paragraph = new Paragraph(WEIGHT_RECORDS_TABLE_TITLE);
+            paragraph.setAlignment(Element.ALIGN_CENTER);
+            paragraph.setSpacingAfter(10);
+            document.add(paragraph);
+
+            PdfPTable table = new PdfPTable(columnsNum);
+            table.addCell(WEIGHT_RECORD_DATE_COLUMN_TITLE);
+            table.addCell(WEIGHT_RECORD_VALUE_COLUMN_TITLE);
+
+            for (WeightRecord record : weightRecordsList) {
+                table.addCell(record.getWeightRecordDate().toString());
+                table.addCell(record.getWeightRecordValue());
+            }
+
+            document.add(table);
+
+            return byteArrayOutputStream;
+        }
     }
 }
 

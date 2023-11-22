@@ -1,9 +1,8 @@
 package ru.verpul.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.verpul.DTO.WeightRecordDTO;
@@ -13,6 +12,7 @@ import ru.verpul.service.WeightRecordService;
 
 import javax.validation.Valid;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -59,5 +59,16 @@ public class WeightRecordController {
         if (file.getSize() > MAX_FILE_SIZE) throw new FileValidationException("Размер файла не может превышать 1 Мб");
 
         weightRecordService.handleFileData(file);
+    }
+
+    @GetMapping("/download/{type}")
+    public ResponseEntity<ByteArrayResource> downloadWeightRecords(@PathVariable String type) {
+        ByteArrayOutputStream stream = weightRecordService.downloadFile(type);
+
+        HttpHeaders header = new HttpHeaders();
+        header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+//        header.setContentDisposition(ContentDisposition.attachment().filename("WeightRecords." + type).build());
+
+        return new ResponseEntity<>(new ByteArrayResource(stream.toByteArray()), header, HttpStatus.OK);
     }
 }
