@@ -1,5 +1,8 @@
 package ru.verpul.service;
 
+import com.lowagie.text.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.*;
 import com.opencsv.CSVReader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -156,7 +159,7 @@ public class WeightRecordService {
     }
 
     public ByteArrayOutputStream downloadFile(String type) {
-        return getDOCFile();
+        return getPDFFile();
     }
 
     public ByteArrayOutputStream getXLSFile() {
@@ -217,7 +220,7 @@ public class WeightRecordService {
             XWPFTableCell cell = row.getCell(cellNum++);
             cell.setText("Дата взвешивания");
             cell = row.getCell(cellNum);
-            cell.setText("Значение");
+            cell.setText("Вес");
 
             for (WeightRecord record : weightRecordsList) {
                 cellNum = 0;
@@ -238,8 +241,34 @@ public class WeightRecordService {
         return null;
     }
 
-    public void getPDFFile() {
+    public ByteArrayOutputStream getPDFFile() {
+        List<WeightRecord> weightRecordsList = weightRecordRepository.findAllOrderByWeightDate();
 
+        try (Document document = new Document(PageSize.A4)) {
+            final int columnsNum = 2;
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            PdfWriter.getInstance(document, byteArrayOutputStream);
+
+            document.open();
+
+            Paragraph paragraph = new Paragraph("Weight records");
+            paragraph.setAlignment(Element.ALIGN_CENTER);
+            paragraph.setSpacingAfter(10);
+            document.add(paragraph);
+
+            PdfPTable table = new PdfPTable(columnsNum);
+            table.addCell("Дата взвешивания");
+            table.addCell("Вес");
+
+            for (WeightRecord record : weightRecordsList) {
+                table.addCell(record.getWeightRecordDate().toString());
+                table.addCell(record.getWeightRecordValue());
+            }
+
+            document.add(table);
+
+            return byteArrayOutputStream;
+        }
     }
 }
 
