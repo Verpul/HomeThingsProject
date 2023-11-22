@@ -3,10 +3,10 @@ package ru.verpul.service;
 import com.opencsv.CSVReader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xwpf.usermodel.*;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -156,7 +156,7 @@ public class WeightRecordService {
     }
 
     public ByteArrayOutputStream downloadFile(String type) {
-        return getXLSFile();
+        return getDOCFile();
     }
 
     public ByteArrayOutputStream getXLSFile() {
@@ -200,8 +200,42 @@ public class WeightRecordService {
         return null;
     }
 
-    public void getDOCFile() {
+    public ByteArrayOutputStream getDOCFile() {
+        List<WeightRecord> weightRecordsList = weightRecordRepository.findAllOrderByWeightDate();
 
+        try (XWPFDocument document = new XWPFDocument()) {
+            XWPFParagraph paragraph = document.createParagraph();
+            XWPFRun run = paragraph.createRun();
+            run.setFontSize(14);
+            run.setText("Weight records");
+
+            XWPFTable table = document.createTable(weightRecordsList.size() + 1, 2);
+            int rowNum = 0;
+            int cellNum = 0;
+
+            XWPFTableRow row = table.getRow(rowNum++);
+            XWPFTableCell cell = row.getCell(cellNum++);
+            cell.setText("Дата взвешивания");
+            cell = row.getCell(cellNum);
+            cell.setText("Значение");
+
+            for (WeightRecord record : weightRecordsList) {
+                cellNum = 0;
+                row = table.getRow(rowNum++);
+
+                cell = row.getCell(cellNum++);
+                cell.setText(record.getWeightRecordDate().toString());
+                cell = row.getCell(cellNum);
+                cell.setText(record.getWeightRecordValue());
+            }
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            document.write(byteArrayOutputStream);
+            return byteArrayOutputStream;
+        } catch (IOException e) {
+            log.error("Ошибка при формировании doc файла", e);
+        }
+        return null;
     }
 
     public void getPDFFile() {
