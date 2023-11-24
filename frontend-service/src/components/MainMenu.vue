@@ -55,6 +55,14 @@
             <v-list-item-title>VK</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item to="/notes">
+          <v-list-item-action>
+            <v-icon>mdi mdi-notebook-outline</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Заметки</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
 
       <template v-slot:append>

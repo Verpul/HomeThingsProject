@@ -6,6 +6,7 @@ import store from "./store"
 import Keycloak from "keycloak-js";
 import setHeader from "@/service/HeadService";
 import '@/globalComponents'
+import tiptap from './plugins/tiptap';
 
 Vue.config.productionTip = false
 
@@ -29,6 +30,7 @@ keycloak.init({onLoad: initOptions.onLoad}).then((auth) => {
       router,
       vuetify,
       store,
+      tiptap,
       render: h => h(App)
     }).$mount('#app');
 

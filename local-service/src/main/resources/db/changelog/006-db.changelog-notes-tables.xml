@@ -1,0 +1,33 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet author="verpul" id="23.11.23-noteCategoryTable">
+        <createTable tableName="note_category">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="note_category_pkey"/>
+            </column>
+            <column name="title" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="verpul" id="23.11.23-noteTable">
+        <createTable tableName="notes">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="note_pkey"/>
+            </column>
+            <column name="category_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text" type="TEXT" />
+        </createTable>
+    </changeSet>
+
+    <changeSet author="verpul" id="23.11.23-noteCategoryTableTitleUniqueConstraint">
+        <addUniqueConstraint columnNames="title" constraintName="note_category_title_unique" tableName="note_category"/>
+    </changeSet>
+
+</databaseChangeLog>
