@@ -62,4 +62,29 @@ VALUES ('RUB', 1000, 'USD', 100, 10, '2020-01-01'),
     ('RUB', 2000, 'EUR', 100, 20, '2020-02-01'),
     ('EUR', 50, 'USD', 55, 1.1, '2021-01-01');
 
+-- populate note categories
+DELETE
+FROM note_category;
+ALTER
+SEQUENCE note_category_id_seq RESTART WITH 1;
+
+INSERT INTO note_category (title)
+VALUES ('Категория 1'),
+       ('Категория 2'),
+       ('Категория 3');
+
+-- populate notes
+DELETE
+FROM notes;
+ALTER
+SEQUENCE notes_id_seq RESTART WITH 1;
+
+INSERT INTO notes (category_id, text)
+VALUES (1, 'Текст 1 для категории 1'),
+       (1, 'Текст 2 для категории 1'),
+       (1, 'Текст 3 для категории 1'),
+       (2, 'Текст 1 для категории 2'),
+       (3, 'Текст 1 для категории 3'),
+       (3, 'Текст 2 для категории 3');
+
 

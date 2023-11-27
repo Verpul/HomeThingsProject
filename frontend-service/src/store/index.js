@@ -8,6 +8,8 @@ import currencyRates from "@/store/modules/currencyRates";
 import currency from "@/store/modules/currency";
 import weather from "@/store/modules/weather";
 import vk from "@/store/modules/vk";
+import notesCategories from "@/store/modules/notesCategories";
+import notes from "@/store/modules/notes";
 
 Vue.use(Vuex)
 
@@ -20,6 +22,8 @@ export default new Vuex.Store({
     currencyRates,
     currency,
     weather,
-    vk
+    vk,
+    notesCategories,
+    notes
   }
 })

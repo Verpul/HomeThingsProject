@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.verpul.DTO.CurrencyAmountDTO;
 import ru.verpul.DTO.CurrencyDTO;
 import ru.verpul.DTO.TinkoffCurrencyRateDTO;
@@ -50,6 +51,7 @@ public class CurrencyService {
         return currencyRecords;
     }
 
+    @Transactional
     public void updateCurrencyRecord(CurrencyDTO currencyDTO, Long id) {
         currencyRepository.findById(id)
                 .map(foundCurrencyRecord -> {
@@ -64,6 +66,7 @@ public class CurrencyService {
                 }).orElseThrow(() -> new NotFoundException("Запись с id = " + id + " не найдена"));
     }
 
+    @Transactional
     public void deleteCurrencyRecord(Long id) {
         currencyRepository.findById(id).ifPresent(currencyRepository::delete);
     }

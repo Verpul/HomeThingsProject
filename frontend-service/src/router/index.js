@@ -6,6 +6,7 @@ import ReminderComponent from "@/components/ReminderComponent";
 import TwitchComponent from "@/components/TwitchComponent";
 import CurrencyComponent from "@/components/CurrencyComponent";
 import VKComponent from "@/components/VKComponent";
+import NotesComponent from "@/components/NotesComponent";
 
 Vue.use(VueRouter)
 
@@ -39,6 +40,11 @@ const routes = [
     path: '/vk',
     name: 'VK Component',
     component: VKComponent
+  },
+  {
+    path: '/notes',
+    name: 'Notes Component',
+    component: NotesComponent
   },
   {
     path: '/:catchAll(.*)',
