@@ -20,7 +20,7 @@
                     </v-col>
                   </v-row>
                 </v-hover>
-                <v-divider></v-divider>
+                <v-divider v-if="categories.length !== 0"></v-divider>
                 <template v-for="(category, index) in categories">
                   <v-hover :key="category.title" v-slot="{hover}">
                     <v-list-item link @click="getNotes(category.id)">
@@ -139,7 +139,11 @@ export default {
   methods: {
     getNotes(categoryId) {
       this.$store.dispatch('getNotes', categoryId);
-      this.selectedCategory = this.categories.find(category => category.id === categoryId);
+
+      if (this.selectedCategory === null || this.selectedCategory.id !== categoryId) {
+        this.selectedCategory = this.categories.find(category => category.id === categoryId);
+        this.clearNoteFields();
+      }
     },
     selectNote(note) {
       this.selectedNoteId = note.id;
@@ -170,10 +174,18 @@ export default {
     },
     deleteNoteCategory() {
       this.$store.dispatch("deleteNoteCategory", this.categoryData.id);
+
       this.clearCategoryFields();
     },
     clearCategoryFields() {
       this.categoryDialog = false;
+
+      if (this.selectedCategory !== null && this.categoryData.id === this.selectedCategory.id) {
+        this.clearNoteFields();
+        this.selectedCategory = null;
+        this.$store.commit('setNotes', {data: []})
+      }
+
       this.categoryData.id = null;
       this.categoryData.title = null;
     },
@@ -200,6 +212,7 @@ export default {
     },
     clearNoteFields() {
       this.noteValue = null;
+      this.selectedNoteId = null;
     },
     removeTags(text) {
       return text.replace(/(<([^>]+)>)/ig, '');
