@@ -24,6 +24,10 @@ twitch:
   redirect-uri: ${TWITCH_REDIRECT_URI}
   user-id: ${TWITCH_USER_ID}
 
+youtube:
+  api-key: ${YOUTUBE_API_KEY}
+  channel-id: ${YOUTUBE_CHANNEL_ID}
+
 eureka:
   client:
     service-url:

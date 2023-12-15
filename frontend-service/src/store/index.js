@@ -10,6 +10,7 @@ import weather from "@/store/modules/weather";
 import vk from "@/store/modules/vk";
 import notesCategories from "@/store/modules/notesCategories";
 import notes from "@/store/modules/notes";
+import youtube from "@/store/modules/youtube";
 
 Vue.use(Vuex)
 
@@ -24,6 +25,7 @@ export default new Vuex.Store({
     weather,
     vk,
     notesCategories,
-    notes
+    notes,
+    youtube
   }
 })

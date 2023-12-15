@@ -7,6 +7,7 @@ import TwitchComponent from "@/components/TwitchComponent";
 import CurrencyComponent from "@/components/CurrencyComponent";
 import VKComponent from "@/components/VKComponent";
 import NotesComponent from "@/components/NotesComponent";
+import YoutubeComponent from "@/components/YoutubeComponent";
 
 Vue.use(VueRouter)
 
@@ -45,6 +46,11 @@ const routes = [
     path: '/notes',
     name: 'Notes Component',
     component: NotesComponent
+  },
+  {
+    path: '/youtube',
+    name: 'Youtube component',
+    component: YoutubeComponent
   },
   {
     path: '/:catchAll(.*)',
