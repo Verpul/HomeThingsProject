@@ -25,6 +25,7 @@ npm run serve
 #### Включает в себя
 - Weight module
 - Reminders module
+- Notes module
 
 #### Enviroment variables:
 - POSTGRES_USER
@@ -39,12 +40,15 @@ npm run serve
 - Курс валют Тинькофф - https://www.tinkoff.ru/about/exchange/
 - Twitch - https://www.twitch.tv/
 - VK - https://vk.com/
+- Youtube - https://www.youtube.com/
 
 #### Enviroment variables:
 - TWITCH_CLIENT_ID 
 - TWITCH_CLIENT_SECRET 
 - TWITCH_REDIRECT_URI 
 - TWITCH_USER_ID 
+- YOUTUBE_API_KEY
+- YOUTUBE_CHANNEL_ID
 
 ## TelegramBot Service
 - Порт 8083

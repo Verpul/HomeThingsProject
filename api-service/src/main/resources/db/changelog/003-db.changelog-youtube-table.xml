@@ -1,0 +1,34 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet author="verpul" id="14.12.23-youtubeChannelTable">
+        <createTable tableName="youtube_channel">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="youtube_channel_pkey"/>
+            </column>
+            <column name="channel_id" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="channel_name" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="thumbnail_url" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="check_new_video" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="verpul" id="14.12.23-youtubeChannelTableChannelIdFieldUniqueConstraint">
+        <addUniqueConstraint columnNames="channel_id" constraintName="youtube_channel_channel_id_unique" tableName="youtube_channel"/>
+    </changeSet>
+
+    <changeSet author="verpul" id="14.12.23-youtubeChannelTableChannelNameFieldUniqueConstraint">
+        <addUniqueConstraint columnNames="channel_name" constraintName="youtube_channel_channel_name_unique" tableName="youtube_channel"/>
+    </changeSet>
+
+</databaseChangeLog>

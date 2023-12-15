@@ -145,6 +145,8 @@ jobs:
             echo TWITCH_REDIRECT_URI=${{secrets.TWITCH_REDIRECT_URI}} >> .env
             echo TWITCH_USER_ID=${{secrets.TWITCH_USER_ID}} >> .env
             echo SENTRY_DSN=${{secrets.SENTRY_DSN}} >> .env
+            echo YOUTUBE_API_KEY=${{secrets.YOUTUBE_API_KEY}}
+            echo YOUTUBE_CHANNEL_ID={{secrets.YOUTUBE_CHANNEL_ID}}
             echo TIMEZONE=Europe/Moscow >> .env
             
             if ${{ needs.changes-filter.outputs.eureka-service}}; then

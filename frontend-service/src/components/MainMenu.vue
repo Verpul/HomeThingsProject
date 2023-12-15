@@ -63,6 +63,14 @@
             <v-list-item-title>Заметки</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item to="/youtube">
+          <v-list-item-action>
+            <v-icon>mdi mdi-youtube</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Youtube</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
 
       <template v-slot:append>
