@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class YoutubeSchedule {
     private final YoutubeService youtubeService;
 
-    @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
+    @Scheduled(fixedRate = 3, timeUnit = TimeUnit.HOURS)
     public void checkNewVideos() {
         youtubeService.checkNewVideos();
     }
