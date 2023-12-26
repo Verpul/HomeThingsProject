@@ -127,11 +127,7 @@ public class YoutubeService {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                     LocalDateTime publishedAtAsJavaDateTime = LocalDateTime.parse(publishedAt, formatter);
 
-                    log.info("Video from channel: " + youtubeChannel.getChannelName() + ", Published at " + publishedAt);
-                    log.info("Current time " + current + ", Current minus 3 hours " + current.minusHours(3));
-                    log.info("Send TG message ? " + publishedAtAsJavaDateTime.isAfter(current.minusHours(3)));
-                    log.info("--------------------------------------------------------");
-                    if (publishedAtAsJavaDateTime.isAfter(current.minusHours(3))) {
+                    if (publishedAtAsJavaDateTime.isAfter(current.minusHours(12))) {
                         String messageForTG = makeMessageForTG(lastVideo);
                         tgBotFeign.sendTGNotification(messageForTG);
                     }
